@@ -50,9 +50,9 @@ passport.use(
         }
     )
 );
+app.use(passport.initialize());
 
 //Setting up Routes
-app.use(passport.initialize());
 app.use("/api/user", UserRouter);
 
 //Setting up Server
