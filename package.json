@@ -2,8 +2,7 @@
     "name": "PetPalBackend",
     "version": "0.0.1",
     "description": "",
-    "main": "index.js",
-    "type": "module",
+    "main": "index.ts",
     "scripts": {
         "start": "set NODE_ENV=local&&node index",
         "dev": "set NODE_ENV=local&&nodemon index",

@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { validate } from "express-validation";
-import { UserController } from "../controllers";
+import UserController from "../controllers/users.controller";
 import passport from "passport";
+import { userValidation, options } from "../validations";
 
 const UserRouter = Router();
-
-UserRouter.post("/login", UserController.login);
 
 UserRouter.get(
     "/",
@@ -22,7 +21,7 @@ UserRouter.get(
 UserRouter.post(
     "/",
     passport.authenticate("jwt", { session: false }),
-    validate(UserRouter.create, options),
+    validate(userValidation.create, options),
     UserController.create
 );
 
@@ -35,14 +34,14 @@ UserRouter.delete(
 UserRouter.put(
     "/:id",
     passport.authenticate("jwt", { session: false }),
-    validate(UserRouter.update, options),
+    validate(userValidation.update, options),
     UserController.update
 );
 
 UserRouter.patch(
     "/:id",
     passport.authenticate("jwt", { session: false }),
-    validate(UserRouter.partialUpdate, options),
+    validate(userValidation.partialUpdate, options),
     UserController.partialUpdate
 );
 

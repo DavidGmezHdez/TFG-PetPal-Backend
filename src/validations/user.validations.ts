@@ -3,7 +3,7 @@ import { Joi } from "express-validation";
 const userValidation = {
     create: {
         body: Joi.object({
-            nombre: Joi.string().required()
+            name: Joi.string().required()
         })
     },
 
@@ -13,7 +13,7 @@ const userValidation = {
         }),
 
         body: Joi.object({
-            nombre: Joi.string().required()
+            name: Joi.string().required()
         })
     },
 
@@ -23,7 +23,7 @@ const userValidation = {
         }),
 
         body: Joi.object({
-            nombre: Joi.string()
+            name: Joi.string()
         })
     }
 };
