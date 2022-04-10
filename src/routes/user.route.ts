@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validate } from "express-validation";
-import UserController from "../controllers/users.controller";
+import { UserController } from "../controllers";
 import passport from "passport";
 import { userValidation, options } from "../validations";
 
