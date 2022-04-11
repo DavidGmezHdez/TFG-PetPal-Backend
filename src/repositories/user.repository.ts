@@ -1,17 +1,27 @@
 import { UserModel } from "../models";
 
 export default class UserRepository {
-    static getAll() {}
+    static getAll() {
+        return UserModel.find();
+    }
 
-    static get(id: number) {}
+    static get(id: number) {
+        return UserModel.findOne(
+            {
+                id: id
+            }
+        );
+    }
 
-    static async create() {}
+    static async create(user) {
+        return UserModel.create(user);
+    }
 
-    static async partialUpdate() {}
+    static async partialUpdate(user) { }
 
-    static async update() {}
+    static async update(user) { }
 
-    static async destroy(id: number) {}
+    static async destroy(id: number) { }
 
-    static async login() {}
+    static async login() { }
 }
