@@ -1,7 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { UserRouter } from "./src/routes";
+import {
+    EventRouter,
+    ProtectorRouter,
+    UserRouter,
+    PostRouter,
+    PetRouter
+} from "./src/routes";
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 
@@ -54,6 +60,10 @@ app.use(passport.initialize());
 
 //Setting up Routes
 app.use("/api/user", UserRouter);
+app.use("/api/event", EventRouter);
+app.use("/api/pet", PetRouter);
+app.use("/api/post", PostRouter);
+app.use("/api/protector", ProtectorRouter);
 
 //Setting up Server
 app.listen(port, () => {
