@@ -3,7 +3,13 @@ import { Joi } from "express-validation";
 const protectorValidation = {
     create: {
         body: Joi.object({
-            name: Joi.string().required()
+            email: Joi.string().required(),
+            name: Joi.string().required(),
+            password: Joi.string().required(),
+            posts: Joi.array(),
+            availablePets: Joi.array(),
+            region: Joi.string().required,
+            contactPhone: Joi.string().required()
         })
     },
 
@@ -13,7 +19,13 @@ const protectorValidation = {
         }),
 
         body: Joi.object({
-            name: Joi.string().required()
+            email: Joi.string(),
+            name: Joi.string(),
+            password: Joi.string(),
+            posts: Joi.array(),
+            availablePets: Joi.array(),
+            region: Joi.string(),
+            contactPhone: Joi.string()
         })
     },
 
@@ -23,7 +35,13 @@ const protectorValidation = {
         }),
 
         body: Joi.object({
-            name: Joi.string()
+            email: Joi.string(),
+            name: Joi.string(),
+            password: Joi.string(),
+            posts: Joi.array(),
+            availablePets: Joi.array(),
+            region: Joi.string(),
+            contactPhone: Joi.string()
         })
     }
 };

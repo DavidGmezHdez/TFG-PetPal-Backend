@@ -3,7 +3,10 @@ import { Joi } from "express-validation";
 const postValidation = {
     create: {
         body: Joi.object({
-            name: Joi.string().required()
+            text: Joi.string().required().max(300),
+            author: Joi.string().required(),
+            likes: Joi.number(),
+            image: Joi.string()
         })
     },
 
@@ -13,7 +16,10 @@ const postValidation = {
         }),
 
         body: Joi.object({
-            name: Joi.string().required()
+            text: Joi.string().max(300),
+            author: Joi.string(),
+            likes: Joi.number(),
+            image: Joi.string()
         })
     },
 
@@ -23,7 +29,10 @@ const postValidation = {
         }),
 
         body: Joi.object({
-            name: Joi.string()
+            text: Joi.string().max(300),
+            author: Joi.string(),
+            likes: Joi.number(),
+            image: Joi.string()
         })
     }
 };

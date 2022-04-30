@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
-    host: { type: Schema.Types.ObjectId, ref: "User" },
+    host: { type: Schema.Types.ObjectId, ref: "User", required: true },
     attendants: [{ type: Schema.Types.ObjectId, ref: "User" }],
     price: { type: Number },
     date: { type: Date, required: true },
