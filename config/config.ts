@@ -9,7 +9,7 @@ const dev = {
     },
     db: {
         host: process.env.DEV_DB_HOST || "localhost",
-        port: process.env.DEV_DB_PORT || 27017,
+        port: process.env.DEV_DB_PORT || 8000,
         atlas_url: process.env.ATLAS_STG_URL
     }
 };
@@ -19,7 +19,7 @@ const local = {
     },
     db: {
         host: process.env.LOCAL_DB_HOST || "localhost",
-        port: process.env.LOCAL_DB_PORT || 27017,
+        port: process.env.LOCAL_DB_PORT || 8000,
         atlas_url: process.env.ATLAS_STG_URL
     }
 };
