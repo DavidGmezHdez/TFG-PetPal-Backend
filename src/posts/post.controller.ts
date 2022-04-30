@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import PostRepository from "./post.repository";
 import PostModel from "./post.model";
-import logger from "../utils/logger";
 
 export default class PostController {
     static async getAll(req, res, next) {
@@ -41,7 +40,6 @@ export default class PostController {
                 id: req.params.id,
                 ...req.body
             });
-            logger.warn(updatedPost);
             return res.json(updatedPost);
         } catch (error) {
             return next(error);
@@ -63,7 +61,6 @@ export default class PostController {
                 id: req.params.id,
                 ...req.body
             });
-            logger.warn(updatedPost);
             return res.json(updatedPost);
         } catch (error) {
             return next(error);
