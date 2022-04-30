@@ -1,19 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 import PetRepository from "./pet.repository";
+import { NotFoundError, InternalError } from "../utils/errors";
 
 export default class PetController {
     static async getAll(req, res, next) {
         const pets = await PetRepository.getAll();
 
-        if (pets === undefined) throw new Error("No pet available");
+        if (pets === undefined)
+            return next(new NotFoundError(`No pet available`));
 
         return res.json(pets);
     }
 
     static async get(req: Request, res: Response, next: NextFunction) {
-        const pet = await PetRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const pet = await PetRepository.get(id);
 
-        if (pet === undefined) throw new Error("Pet not found");
+        if (pet === undefined) return next(new NotFoundError(`No pet found`));
 
         return res.json(pet);
     }
@@ -23,14 +26,15 @@ export default class PetController {
             const createdPet = PetRepository.create({ ...req.body });
             return res.status(201).json(createdPet);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while creating pet`));
         }
     }
 
     static async update(req: Request, res: Response, next: NextFunction) {
-        const foundPet = await PetRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundPet = await PetRepository.get(id);
 
-        if (!foundPet) throw new Error("Pet doesn't exist");
+        if (!foundPet) return next(new NotFoundError(`Pet doesn't exist`));
 
         try {
             const updatedPet = PetRepository.update({
@@ -39,7 +43,7 @@ export default class PetController {
             });
             return res.json(updatedPet);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while updating pet`));
         }
     }
 
@@ -48,9 +52,10 @@ export default class PetController {
         res: Response,
         next: NextFunction
     ) {
-        const foundPet = await PetRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundPet = await PetRepository.get(id);
 
-        if (!foundPet) throw new Error("Pet doesn't exist");
+        if (!foundPet) return next(new NotFoundError(`Pet doesn't exist`));
 
         try {
             const updatedPet = PetRepository.update({
@@ -59,20 +64,21 @@ export default class PetController {
             });
             return res.json(updatedPet);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while updating pet`));
         }
     }
 
     static async destroy(req: Request, res: Response, next: NextFunction) {
-        const foundPet = await PetRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundPet = await PetRepository.get(id);
 
-        if (!foundPet) throw new Error("Pet doesn't exist");
+        if (!foundPet) return next(new NotFoundError(`Pet doesn't exist`));
 
         try {
-            await PetRepository.destroy(Number(req.params.id));
+            await PetRepository.destroy(id);
             return res.status(204).json(null);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while updating pet`));
         }
     }
 }

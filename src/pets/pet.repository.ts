@@ -5,19 +5,23 @@ export default class PetRepository {
         return PetModel.find();
     }
 
-    static get(id: number) {
-        return PetModel.findOne({
-            id: id
-        });
+    static get(id: string) {
+        return PetModel.findById(id);
     }
 
     static async create(pet) {
         return PetModel.create(pet);
     }
 
-    static async partialUpdate(pet) {}
+    static async partialUpdate(pet) {
+        return PetModel.findByIdAndUpdate({ _id: pet.id }, { $set: pet });
+    }
 
-    static async update(pet) {}
+    static async update(pet) {
+        return PetModel.findByIdAndUpdate({ _id: pet.id }, { $set: pet });
+    }
 
-    static async destroy(id: number) {}
+    static async destroy(id: string) {
+        return PetModel.findByIdAndDelete(id);
+    }
 }

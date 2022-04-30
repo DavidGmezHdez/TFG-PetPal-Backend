@@ -15,7 +15,7 @@ const petValidation = {
 
     update: {
         params: Joi.object({
-            id: Joi.number().required()
+            id: Joi.string().required()
         }),
 
         body: Joi.object({
@@ -31,7 +31,7 @@ const petValidation = {
 
     partialUpdate: {
         params: Joi.object({
-            id: Joi.number().required()
+            id: Joi.string().required()
         }),
 
         body: Joi.object({
