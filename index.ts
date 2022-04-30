@@ -11,7 +11,7 @@ import logger from "./src/utils/logger";
 const app = express();
 
 if (!dotenv.config()) {
-    logger.error("Error configurating process environment");
+    logger.error("Error configuration process environment");
 }
 
 app.use(express.json());
