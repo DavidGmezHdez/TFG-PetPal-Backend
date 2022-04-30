@@ -1,18 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import {
-    EventRouter,
-    ProtectorRouter,
-    UserRouter,
-    PostRouter,
-    PetRouter
-} from "./src/routes";
+import { router } from "./src/routes";
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
+import mongoose from "mongoose";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const config = require("./config/config");
 
-const mongoose = require("mongoose");
-const config = require("./src/config/config");
 const app = express();
 
 if (dotenv.config()) {
@@ -28,16 +23,12 @@ const {
     db: { port, atlas_url }
 } = config;
 
-mongoose.connect(atlas_url, { useNewUrlParser: true }).catch((err) => {
+mongoose.connect(atlas_url).catch((err) => {
     console.log("Couldn't connect to Mongo: " + err);
 });
 
 mongoose.connection.once("open", () => {
     console.log("MongoDB is fully connected and operational");
-});
-
-require("dns").lookup(require("os").hostname(), function (err, add, fam) {
-    console.log("addr: " + add);
 });
 
 // Setting up Passport
@@ -59,11 +50,7 @@ passport.use(
 app.use(passport.initialize());
 
 //Setting up Routes
-app.use("/api/user", UserRouter);
-app.use("/api/event", EventRouter);
-app.use("/api/pet", PetRouter);
-app.use("/api/post", PostRouter);
-app.use("/api/protector", ProtectorRouter);
+app.use("/api/v1", router);
 
 //Setting up Server
 app.listen(port, () => {
