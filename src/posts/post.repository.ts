@@ -5,19 +5,23 @@ export default class PostRepository {
         return PostModel.find();
     }
 
-    static get(id: number) {
-        return PostModel.findOne({
-            id: id
-        });
+    static get(id: string) {
+        return PostModel.findById(id);
     }
 
     static async create(post) {
-        return PostModel.create(post);
+        return await PostModel.create(post);
     }
 
-    static async partialUpdate(post) {}
+    static async partialUpdate(post) {
+        return PostModel.findByIdAndUpdate({ _id: post.id }, { $set: post });
+    }
 
-    static async update(post) {}
+    static async update(post) {
+        return PostModel.findByIdAndUpdate({ _id: post.id }, { $set: post });
+    }
 
-    static async destroy(id: number) {}
+    static async destroy(id: string) {
+        return PostModel.findByIdAndDelete(id);
+    }
 }

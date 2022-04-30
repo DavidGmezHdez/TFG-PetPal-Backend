@@ -6,33 +6,33 @@ const postValidation = {
             text: Joi.string().required().max(300),
             author: Joi.string().required(),
             likes: Joi.number(),
-            image: Joi.string()
+            image: Joi.string().allow("").optional()
         })
     },
 
     update: {
         params: Joi.object({
-            id: Joi.number().required()
+            id: Joi.string().required()
         }),
 
         body: Joi.object({
-            text: Joi.string().max(300),
-            author: Joi.string(),
-            likes: Joi.number(),
-            image: Joi.string()
+            text: Joi.string().max(300).optional(),
+            author: Joi.string().optional(),
+            likes: Joi.number().optional(),
+            image: Joi.string().allow("").optional()
         })
     },
 
     partialUpdate: {
         params: Joi.object({
-            id: Joi.number().required()
+            id: Joi.string().required()
         }),
 
         body: Joi.object({
-            text: Joi.string().max(300),
-            author: Joi.string(),
-            likes: Joi.number(),
-            image: Joi.string()
+            text: Joi.string().max(300).optional(),
+            author: Joi.string().optional(),
+            likes: Joi.number().optional(),
+            image: Joi.string().allow("").optional()
         })
     }
 };

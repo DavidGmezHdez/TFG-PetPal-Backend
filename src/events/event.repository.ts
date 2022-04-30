@@ -15,7 +15,9 @@ export default class EventRepository {
         return EventModel.create(event);
     }
 
-    static async partialUpdate(event) {}
+    static async partialUpdate(event) {
+        return EventModel.updateOne({ _id: event.id }, { $set: event });
+    }
 
     static async update(event) {}
 

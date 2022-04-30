@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import PostRepository from "./post.repository";
 import PostModel from "./post.model";
+import logger from "../utils/logger";
 
 export default class PostController {
     static async getAll(req, res, next) {
@@ -12,7 +13,8 @@ export default class PostController {
     }
 
     static async get(req: Request, res: Response, next: NextFunction) {
-        const post = await PostRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const post = await PostRepository.get(id);
 
         if (post === undefined) throw new Error("Post not found");
 
@@ -21,7 +23,7 @@ export default class PostController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const createdPost = PostModel.create({ ...req.body });
+            const createdPost = await PostModel.create({ ...req.body });
             return res.status(201).json(createdPost);
         } catch (error) {
             return next(error);
@@ -29,15 +31,17 @@ export default class PostController {
     }
 
     static async update(req: Request, res: Response, next: NextFunction) {
-        const foundPost = await PostRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundPost = await PostRepository.get(id);
 
         if (!foundPost) throw new Error("Post doesn't exist");
 
         try {
-            const updatedPost = PostRepository.update({
+            const updatedPost = await PostRepository.update({
                 id: req.params.id,
                 ...req.body
             });
+            logger.warn(updatedPost);
             return res.json(updatedPost);
         } catch (error) {
             return next(error);
@@ -49,15 +53,17 @@ export default class PostController {
         res: Response,
         next: NextFunction
     ) {
-        const foundPost = await PostRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundPost = await PostRepository.get(id);
 
         if (!foundPost) throw new Error("Post doesn't exist");
 
         try {
-            const updatedPost = PostRepository.update({
+            const updatedPost = await PostRepository.update({
                 id: req.params.id,
                 ...req.body
             });
+            logger.warn(updatedPost);
             return res.json(updatedPost);
         } catch (error) {
             return next(error);
@@ -65,12 +71,13 @@ export default class PostController {
     }
 
     static async destroy(req: Request, res: Response, next: NextFunction) {
-        const foundPost = await PostRepository.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundPost = await PostRepository.get(id);
 
         if (!foundPost) throw new Error("Post doesn't exist");
 
         try {
-            await PostRepository.destroy(Number(req.params.id));
+            await PostRepository.destroy(id);
             return res.status(204).json(null);
         } catch (error) {
             return next(error);
