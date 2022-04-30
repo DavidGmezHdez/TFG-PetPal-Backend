@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import { router } from "./src/utils/routes";
 import config from "./config/config";
 import logger from "./src/utils/logger";
+import { handleError } from "./src/middlewares/errorHandler";
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use(passport.initialize());
 
 //Setting up Routes
 app.use("/api/v1", router);
+app.use(handleError);
 
 //Setting up Server
 app.listen(port, () => {

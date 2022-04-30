@@ -28,7 +28,7 @@ export const PostRouter = Router()
     )
     .put(
         "/:id",
-        passport.authenticate("jwt", { session: false }),
+
         validate(postValidation.update),
         PostController.update
     )
