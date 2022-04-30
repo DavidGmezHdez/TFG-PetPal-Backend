@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
-import { UserModel } from "../users";
 
 const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
-    host: { type: UserModel, required: true },
-    attendants: [{ type: UserModel }],
+    host: { type: Schema.Types.ObjectId, ref: "User" },
+    attendants: [{ type: Schema.Types.ObjectId, ref: "User" }],
     price: { type: Number },
     date: { type: Date, required: true },
     place: { type: String, required: true },

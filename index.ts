@@ -5,12 +5,11 @@ import { router } from "./src/routes";
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import mongoose from "mongoose";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const config = require("./config/config");
+import config from "./config/config";
 
 const app = express();
 
-if (dotenv.config()) {
+if (!dotenv.config()) {
     console.error("Error configurating process environment");
 }
 

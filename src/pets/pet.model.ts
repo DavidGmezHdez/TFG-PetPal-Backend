@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { UserModel } from "../users";
 
 const Schema = mongoose.Schema;
 
@@ -10,7 +9,7 @@ const petSchema = new Schema({
     color: { type: String },
     size: { type: String },
     specialTraits: [{ type: String }],
-    owner: { type: UserModel }
+    owner: { type: Schema.Types.ObjectId, ref: "User" }
 });
 
 const PetModel = mongoose.model("Pet", petSchema);

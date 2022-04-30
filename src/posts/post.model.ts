@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
-import { UserModel } from "../users";
 
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
     text: { type: String, maxlength: 300 },
-    author: { type: UserModel },
+    author: { type: Schema.Types.ObjectId, ref: "User" },
     likes: { qty: Number },
     image: { url: String }
 });

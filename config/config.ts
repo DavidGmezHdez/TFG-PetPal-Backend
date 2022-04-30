@@ -29,4 +29,4 @@ const config = {
     local
 };
 
-module.exports = config[env];
+export default config[env];
