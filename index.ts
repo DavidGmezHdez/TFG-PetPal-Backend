@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import mongoose from "mongoose";
-import { router } from "./src/routes";
+import { router } from "./src/utils/routes";
 import config from "./config/config";
 import logger from "./src/utils/logger";
 
