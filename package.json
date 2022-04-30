@@ -4,9 +4,9 @@
     "description": "",
     "main": "index.ts",
     "scripts": {
-        "start": "set NODE_ENV=local&&nodemon index.ts",
-        "dev": "set NODE_ENV=local&&nodemon index.ts",
-        "local": "set NODE_ENV=local&&nodemon index.ts",
+        "start": "set NODE_ENV=local&&node-dev index.ts",
+        "dev": "set NODE_ENV=local&&node-dev index.ts",
+        "local": "set NODE_ENV=local&&node-dev index.ts",
         "lint": "npx eslint ."
     },
     "author": "DavidGmezHdez",
@@ -30,7 +30,6 @@
         "@typescript-eslint/eslint-plugin": "^5.21.0",
         "@typescript-eslint/parser": "^5.21.0",
         "eslint": "^8.14.0",
-        "nodemon": "^2.0.15",
         "ts-node": "^10.7.0"
     }
 }
