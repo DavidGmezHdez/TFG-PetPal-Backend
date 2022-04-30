@@ -1,16 +1,17 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { router } from "./src/routes";
 import passport from "passport";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import mongoose from "mongoose";
+import { router } from "./src/routes";
 import config from "./config/config";
+import logger from "./src/utils/logger";
 
 const app = express();
 
 if (!dotenv.config()) {
-    console.error("Error configurating process environment");
+    logger.error("Error configurating process environment");
 }
 
 app.use(express.json());
@@ -23,11 +24,11 @@ const {
 } = config;
 
 mongoose.connect(atlas_url).catch((err) => {
-    console.log("Couldn't connect to Mongo: " + err);
+    logger.warn("Couldn't connect to Mongo: " + err);
 });
 
 mongoose.connection.once("open", () => {
-    console.log("MongoDB is fully connected and operational");
+    logger.warn("MongoDB is fully connected and operational");
 });
 
 // Setting up Passport
@@ -53,7 +54,7 @@ app.use("/api/v1", router);
 
 //Setting up Server
 app.listen(port, () => {
-    console.log(`Server running in port: ${port}`);
+    logger.warn(`Server running in port: ${port}`);
 });
 
 app.get("/", (req, res) => {
