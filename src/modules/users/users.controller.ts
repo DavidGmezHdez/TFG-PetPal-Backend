@@ -1,45 +1,50 @@
 import { NextFunction, Request, Response } from "express";
 import UserRepostory from "./user.repository";
+import { NotFoundError, InternalError } from "../../utils/errors";
 
 export default class UserController {
     static async getAll(req, res, next) {
         const users = await UserRepostory.getAll();
 
-        if (users === undefined) throw new Error("No user available");
+        if (users === undefined)
+            return next(new NotFoundError(`No user available`));
 
         return res.json(users);
     }
 
     static async get(req: Request, res: Response, next: NextFunction) {
-        const user = await UserRepostory.get(Number(req.params.id));
+        const { id } = req.params;
+        const user = await UserRepostory.get(id);
 
-        if (user === undefined) throw new Error("User not found");
+        if (user === undefined)
+            return next(new NotFoundError(`User not found`));
 
         return res.json(user);
     }
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const createdUser = UserRepostory.create({ ...req.body });
+            const createdUser = await UserRepostory.create({ ...req.body });
             return res.status(201).json(createdUser);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while creating user`));
         }
     }
 
     static async update(req: Request, res: Response, next: NextFunction) {
-        const foundUser = await UserRepostory.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundUser = await UserRepostory.get(id);
 
-        if (!foundUser) throw new Error("User doesn't exist");
+        if (!foundUser) return next(new NotFoundError(`User doesn't exist`));
 
         try {
-            const updatedUser = UserRepostory.update({
+            const updatedUser = await UserRepostory.update({
                 id: req.params.id,
                 ...req.body
             });
             return res.json(updatedUser);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while updating user`));
         }
     }
 
@@ -48,31 +53,33 @@ export default class UserController {
         res: Response,
         next: NextFunction
     ) {
-        const foundUser = await UserRepostory.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundUser = await UserRepostory.get(id);
 
-        if (!foundUser) throw new Error("User doesn't exist");
+        if (!foundUser) return next(new NotFoundError(`User doesn't exist`));
 
         try {
-            const updatedUser = UserRepostory.update({
+            const updatedUser = await UserRepostory.update({
                 id: req.params.id,
                 ...req.body
             });
             return res.json(updatedUser);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while updating user`));
         }
     }
 
     static async destroy(req: Request, res: Response, next: NextFunction) {
-        const foundUser = await UserRepostory.get(Number(req.params.id));
+        const { id } = req.params;
+        const foundUser = await UserRepostory.get(id);
 
-        if (!foundUser) throw new Error("User doesn't exist");
+        if (!foundUser) return next(new NotFoundError(`User doesn't exist`));
 
         try {
-            await UserRepostory.destroy(Number(req.params.id));
+            await UserRepostory.destroy(id);
             return res.status(204).json(null);
         } catch (error) {
-            return next(error);
+            return next(new InternalError(`Error while deleting user`));
         }
     }
 }

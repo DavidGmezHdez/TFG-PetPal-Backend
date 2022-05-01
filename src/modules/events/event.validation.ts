@@ -19,14 +19,14 @@ const eventValidation = {
         }),
 
         body: Joi.object({
-            date: Joi.date(),
-            attendants: Joi.array(),
-            host: Joi.string(),
-            price: Joi.number(),
-            place: Joi.string(),
-            title: Joi.string(),
-            description: Joi.string(),
-            image: Joi.string()
+            date: Joi.date().optional(),
+            attendants: Joi.array().optional(),
+            host: Joi.string().optional(),
+            price: Joi.number().optional(),
+            place: Joi.string().optional(),
+            title: Joi.string().optional(),
+            description: Joi.string().optional(),
+            image: Joi.string().optional()
         })
     },
 
@@ -36,14 +36,14 @@ const eventValidation = {
         }),
 
         body: Joi.object({
-            date: Joi.date(),
-            attendants: Joi.array(),
-            host: Joi.string(),
-            price: Joi.number(),
-            place: Joi.string(),
-            title: Joi.string(),
-            description: Joi.string(),
-            image: Joi.string()
+            date: Joi.date().optional(),
+            attendants: Joi.array().optional(),
+            host: Joi.string().optional(),
+            price: Joi.number().optional(),
+            place: Joi.string().optional(),
+            title: Joi.string().optional(),
+            description: Joi.string().optional(),
+            image: Joi.string().optional()
         })
     }
 };

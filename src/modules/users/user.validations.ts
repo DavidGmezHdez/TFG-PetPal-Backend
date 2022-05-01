@@ -6,42 +6,42 @@ const userValidation = {
             name: Joi.string().required(),
             email: Joi.string().required(),
             password: Joi.string().required(),
-            posts: Joi.array(),
-            pets: Joi.array(),
-            hostEvents: Joi.array(),
-            attendingEvents: Joi.array()
+            posts: Joi.array().optional(),
+            pets: Joi.array().optional(),
+            hostEvents: Joi.array().optional(),
+            attendingEvents: Joi.array().optional()
         })
     },
 
     update: {
         params: Joi.object({
-            id: Joi.number().required()
+            id: Joi.string().required()
         }),
 
         body: Joi.object({
-            name: Joi.string(),
-            email: Joi.string(),
-            password: Joi.string(),
-            posts: Joi.array(),
-            pets: Joi.array(),
-            hostEvents: Joi.array(),
-            attendingEvents: Joi.array()
+            name: Joi.string().optional(),
+            email: Joi.string().optional(),
+            password: Joi.string().optional(),
+            posts: Joi.array().optional(),
+            pets: Joi.array().optional(),
+            hostEvents: Joi.array().optional(),
+            attendingEvents: Joi.array().optional()
         })
     },
 
     partialUpdate: {
         params: Joi.object({
-            id: Joi.number().required()
+            id: Joi.string().required()
         }),
 
         body: Joi.object({
-            name: Joi.string(),
-            email: Joi.string(),
-            password: Joi.string(),
-            posts: Joi.array(),
-            pets: Joi.array(),
-            hostEvents: Joi.array(),
-            attendingEvents: Joi.array()
+            name: Joi.string().optional(),
+            email: Joi.string().optional(),
+            password: Joi.string().optional(),
+            posts: Joi.array().optional(),
+            pets: Joi.array().optional(),
+            hostEvents: Joi.array().optional(),
+            attendingEvents: Joi.array().optional()
         })
     }
 };

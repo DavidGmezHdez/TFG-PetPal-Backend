@@ -23,7 +23,7 @@ export default class PetController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const createdPet = PetRepository.create({ ...req.body });
+            const createdPet = await PetRepository.create({ ...req.body });
             return res.status(201).json(createdPet);
         } catch (error) {
             return next(new InternalError(`Error while creating pet`));
@@ -37,7 +37,7 @@ export default class PetController {
         if (!foundPet) return next(new NotFoundError(`Pet doesn't exist`));
 
         try {
-            const updatedPet = PetRepository.update({
+            const updatedPet = await PetRepository.update({
                 id: req.params.id,
                 ...req.body
             });
@@ -58,7 +58,7 @@ export default class PetController {
         if (!foundPet) return next(new NotFoundError(`Pet doesn't exist`));
 
         try {
-            const updatedPet = PetRepository.update({
+            const updatedPet = await PetRepository.update({
                 id: req.params.id,
                 ...req.body
             });

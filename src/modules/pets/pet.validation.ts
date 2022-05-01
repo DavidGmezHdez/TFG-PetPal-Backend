@@ -8,8 +8,8 @@ const petValidation = {
             age: Joi.number().required(),
             color: Joi.string(),
             size: Joi.string(),
-            specialTraits: Joi.array(),
-            owner: Joi.string()
+            specialTraits: Joi.array().optional(),
+            owner: Joi.string().allow("").optional()
         })
     },
 
@@ -19,13 +19,13 @@ const petValidation = {
         }),
 
         body: Joi.object({
-            name: Joi.string(),
-            type: Joi.string(),
-            age: Joi.number(),
-            color: Joi.string(),
-            size: Joi.string(),
-            specialTraits: Joi.array(),
-            owner: Joi.string()
+            name: Joi.string().optional(),
+            type: Joi.string().optional(),
+            age: Joi.number().optional(),
+            color: Joi.string().optional(),
+            size: Joi.string().optional(),
+            specialTraits: Joi.array().optional(),
+            owner: Joi.string().allow("").optional()
         })
     },
 
@@ -35,13 +35,13 @@ const petValidation = {
         }),
 
         body: Joi.object({
-            name: Joi.string(),
-            type: Joi.string(),
-            age: Joi.number(),
-            color: Joi.string(),
-            size: Joi.string(),
-            specialTraits: Joi.array(),
-            owner: Joi.string()
+            name: Joi.string().optional(),
+            type: Joi.string().optional(),
+            age: Joi.number().optional(),
+            color: Joi.string().optional(),
+            size: Joi.string().optional(),
+            specialTraits: Joi.array().optional(),
+            owner: Joi.string().allow("").optional()
         })
     }
 };

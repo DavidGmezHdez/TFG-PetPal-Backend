@@ -1,27 +1,35 @@
 import PetModel from "./pet.model";
 
 export default class PetRepository {
-    static getAll() {
-        return PetModel.find();
+    static async getAll() {
+        return await PetModel.find();
     }
 
-    static get(id: string) {
-        return PetModel.findById(id);
+    static async get(id: string) {
+        return await PetModel.findById(id);
     }
 
     static async create(pet) {
-        return PetModel.create(pet);
+        return await PetModel.create(pet);
     }
 
     static async partialUpdate(pet) {
-        return PetModel.findByIdAndUpdate({ _id: pet.id }, { $set: pet });
+        return await PetModel.findByIdAndUpdate(
+            { _id: pet.id },
+            { $set: pet },
+            { new: true }
+        );
     }
 
     static async update(pet) {
-        return PetModel.findByIdAndUpdate({ _id: pet.id }, { $set: pet });
+        return await PetModel.findByIdAndUpdate(
+            { _id: pet.id },
+            { $set: pet },
+            { new: true }
+        );
     }
 
     static async destroy(id: string) {
-        return PetModel.findByIdAndDelete(id);
+        return await PetModel.findByIdAndDelete(id);
     }
 }

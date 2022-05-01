@@ -5,19 +5,31 @@ export default class ProtectorRepository {
         return ProtectorModel.find();
     }
 
-    static get(id: number) {
-        return ProtectorModel.findOne({
-            id: id
-        });
+    static get(id: string) {
+        return ProtectorModel.findById(id);
     }
 
-    static async create(user) {
-        return ProtectorModel.create(user);
+    static async create(protector) {
+        return ProtectorModel.create(protector);
     }
 
-    static async partialUpdate(user) {}
+    static async partialUpdate(protector) {
+        return await ProtectorModel.findByIdAndUpdate(
+            { _id: protector.id },
+            { $set: protector },
+            { new: true }
+        );
+    }
 
-    static async update(user) {}
+    static async update(protector) {
+        return await ProtectorModel.findByIdAndUpdate(
+            { _id: protector.id },
+            { $set: protector },
+            { new: true }
+        );
+    }
 
-    static async destroy(id: number) {}
+    static async destroy(id: string) {
+        return await ProtectorModel.findByIdAndDelete(id);
+    }
 }

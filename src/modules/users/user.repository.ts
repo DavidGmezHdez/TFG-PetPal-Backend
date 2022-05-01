@@ -5,22 +5,32 @@ export default class UserRepository {
         return await UserModel.find();
     }
 
-    static async get(id: number) {
-        return await UserModel.findOne({
-            id: id
-        });
+    static async get(id: string) {
+        return await UserModel.findById(id);
     }
 
     static async create(user) {
         return await UserModel.create(user);
     }
 
-    static async partialUpdate(user) {}
+    static async partialUpdate(user) {
+        return await UserModel.findByIdAndUpdate(
+            { _id: user.id },
+            { $set: user },
+            { new: true }
+        );
+    }
 
-    static async update(user) {}
+    static async update(user) {
+        return await UserModel.findByIdAndUpdate(
+            { _id: user.id },
+            { $set: user },
+            { new: true }
+        );
+    }
 
-    static async destroy(id: number) {
-        return await UserModel.remove({ _id: id });
+    static async destroy(id: string) {
+        return await UserModel.findByIdAndDelete(id);
     }
 
     static async login(email: string, password: string) {

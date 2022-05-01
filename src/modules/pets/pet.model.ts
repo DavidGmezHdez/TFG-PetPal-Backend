@@ -9,7 +9,7 @@ const petSchema = new Schema({
     color: { type: String },
     size: { type: String },
     specialTraits: [{ type: String }],
-    owner: { type: Schema.Types.ObjectId, ref: "User" }
+    owner: { type: Schema.Types.ObjectId, ref: "User", default: null }
 });
 
 const PetModel = mongoose.model("Pet", petSchema);

@@ -1,14 +1,12 @@
 import EventModel from "./event.model";
 
 export default class EventRepository {
-    static getAll() {
-        return EventModel.find();
+    static async getAll() {
+        return await EventModel.find();
     }
 
-    static get(id: number) {
-        return EventModel.findOne({
-            id: id
-        });
+    static async get(id: string) {
+        return await EventModel.findById(id);
     }
 
     static async create(event) {
@@ -16,10 +14,22 @@ export default class EventRepository {
     }
 
     static async partialUpdate(event) {
-        return EventModel.updateOne({ _id: event.id }, { $set: event });
+        return await EventModel.findByIdAndUpdate(
+            { _id: event.id },
+            { $set: event },
+            { new: true }
+        );
     }
 
-    static async update(event) {}
+    static async update(event) {
+        return await EventModel.findByIdAndUpdate(
+            { _id: event.id },
+            { $set: event },
+            { new: true }
+        );
+    }
 
-    static async destroy(id: number) {}
+    static async destroy(id: string) {
+        return await EventModel.findByIdAndDelete(id);
+    }
 }

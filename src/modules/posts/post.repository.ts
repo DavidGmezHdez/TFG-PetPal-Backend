@@ -1,12 +1,12 @@
 import PostModel from "./post.model";
 
 export default class PostRepository {
-    static getAll() {
-        return PostModel.find();
+    static async getAll() {
+        return await PostModel.find();
     }
 
-    static get(id: string) {
-        return PostModel.findById(id);
+    static async get(id: string) {
+        return await PostModel.findById(id);
     }
 
     static async create(post) {
@@ -14,14 +14,22 @@ export default class PostRepository {
     }
 
     static async partialUpdate(post) {
-        return PostModel.findByIdAndUpdate({ _id: post.id }, { $set: post });
+        return await PostModel.findByIdAndUpdate(
+            { _id: post.id },
+            { $set: post },
+            { new: true }
+        );
     }
 
     static async update(post) {
-        return PostModel.findByIdAndUpdate({ _id: post.id }, { $set: post });
+        return await PostModel.findByIdAndUpdate(
+            { _id: post.id },
+            { $set: post },
+            { new: true }
+        );
     }
 
     static async destroy(id: string) {
-        return PostModel.findByIdAndDelete(id);
+        return await PostModel.findByIdAndDelete(id);
     }
 }
