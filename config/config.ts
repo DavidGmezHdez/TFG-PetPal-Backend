@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require("dotenv").config();
+import dotenv from "dotenv";
 
+dotenv.config();
 const env: string = process.env.NODE_ENV || "local";
 
 const dev = {
