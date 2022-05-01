@@ -13,6 +13,12 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "strictPropertyInitialization": false,
-        "useUnknownInCatchVariables": false
+        "useUnknownInCatchVariables": false,
+        "baseUrl": "src",
+        "paths": {
+            "@modules/*": ["modules/*"],
+            "@utils/*": ["utils/*"],
+            "@middlewares/*": ["middlewares/*"]
+        }
     }
 }

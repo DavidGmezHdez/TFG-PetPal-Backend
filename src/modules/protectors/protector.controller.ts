@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import ProtectorRepository from "./protector.repository";
-import ProtectorModel from "./protector.model";
 
 export default class ProtectorController {
     static async getAll(req, res, next) {

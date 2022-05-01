@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import PostRepository from "./post.repository";
 import PostModel from "./post.model";
-import { InternalError, NotFoundError } from "./../utils/errors";
+import { InternalError, NotFoundError } from "@utils/errors";
 
 export default class PostController {
     static async getAll(req, res, next) {

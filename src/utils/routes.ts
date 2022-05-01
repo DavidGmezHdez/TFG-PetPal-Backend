@@ -1,9 +1,9 @@
 import express from "express";
-import { EventRouter } from "../events";
-import { PetRouter } from "../pets";
-import { PostRouter } from "../posts";
-import { ProtectorRouter } from "../protectors";
-import { UserRouter } from "../users";
+import { EventRouter } from "@modules/events";
+import { PetRouter } from "@modules/pets";
+import { PostRouter } from "@modules/posts";
+import { ProtectorRouter } from "@modules/protectors";
+import { UserRouter } from "@modules/users";
 
 export const router = express
     .Router()
