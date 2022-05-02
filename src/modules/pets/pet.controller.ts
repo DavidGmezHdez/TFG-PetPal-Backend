@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import PetRepository from "./pet.repository";
-import { NotFoundError, InternalError, BadRequest } from "@utils/errors";
+import { InternalError, BadRequest } from "@utils/errors";
 
 export default class PetController {
     static async getAll(req, res, next) {
