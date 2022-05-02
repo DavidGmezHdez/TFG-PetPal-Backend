@@ -34,6 +34,7 @@ export const PetRouter = Router()
     )
     .patch(
         "/:id",
+        passport.authenticate("jwt", { session: false }),
         validate(petValidation.partialUpdate),
         PetController.partialUpdate
     );

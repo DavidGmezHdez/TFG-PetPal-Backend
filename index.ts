@@ -55,7 +55,7 @@ app.use("/api/v1", router);
 app.use(handleError);
 
 //Setting up Server
-app.listen(process.env.PORT || 8000, () => {
+app.listen(port, () => {
     logger.warn(`Server running in port: ${port}`);
 });
 
