@@ -15,7 +15,7 @@ export default class PetController {
     static async get(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const pet = await PetRepository.get(id);
             return res.status(200).json(pet);
         } catch (error) {
@@ -35,7 +35,7 @@ export default class PetController {
     static async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const updatedPet = await PetRepository.update({
                 id: id,
                 ...req.body
@@ -53,7 +53,7 @@ export default class PetController {
     ) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const updatedPet = await PetRepository.update({
                 id: id,
                 ...req.body
@@ -67,7 +67,7 @@ export default class PetController {
     static async destroy(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const deletedPet = await PetRepository.destroy(id);
             return res.status(204).json(deletedPet);
         } catch (error) {

@@ -8,18 +8,18 @@ export default class ProtectorController {
             const protectors = await ProtectorRepository.getAll();
             return res.status(200).json(protectors);
         } catch (error) {
-            next(error);
+            return next(error);
         }
     }
 
     static async get(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const protector = await ProtectorRepository.get(id);
             return res.status(200).json(protector);
         } catch (error) {
-            next(error);
+            return next(error);
         }
     }
 
@@ -37,7 +37,7 @@ export default class ProtectorController {
     static async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const updatedProtector = await ProtectorRepository.update({
                 id: id,
                 ...req.body
@@ -55,7 +55,7 @@ export default class ProtectorController {
     ) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const updatedProtector = await ProtectorRepository.update({
                 id: id,
                 ...req.body
@@ -69,7 +69,7 @@ export default class ProtectorController {
     static async destroy(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const deletedProtector = await ProtectorRepository.destroy(id);
             return res.status(204).json(deletedProtector);
         } catch (error) {

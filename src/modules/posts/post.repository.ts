@@ -4,13 +4,13 @@ import PostModel from "./post.model";
 export default class PostRepository {
     static async getAll() {
         const posts = await PostModel.find();
-        if (posts === undefined) return new NotFoundError(`No posts available`);
+        if (posts === undefined) throw new NotFoundError(`No posts available`);
         return posts;
     }
 
     static async get(id: string) {
         const post = await PostModel.findById(id);
-        if (post === undefined) return new NotFoundError(`No post available`);
+        if (post === undefined) throw new NotFoundError(`No post available`);
         return post;
     }
 

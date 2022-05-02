@@ -15,7 +15,7 @@ export default class PostController {
     static async get(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const post = await PostRepository.get(id);
             return res.status(200).json(post);
         } catch (error) {
@@ -35,7 +35,7 @@ export default class PostController {
     static async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const updatedPost = await PostRepository.update({
                 id: id,
                 ...req.body
@@ -53,7 +53,7 @@ export default class PostController {
     ) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const updatedPost = await PostRepository.update({
                 id: id,
                 ...req.body
@@ -67,7 +67,7 @@ export default class PostController {
     static async destroy(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) return next(new BadRequest("No id was provided"));
+            if (!id) throw new BadRequest("No id was provided");
             const deletedPost = await PostRepository.destroy(id);
             return res.status(204).json(deletedPost);
         } catch (error) {
