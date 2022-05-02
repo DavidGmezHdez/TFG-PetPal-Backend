@@ -1,4 +1,4 @@
-import { InternalError, NotFoundError } from "../../utils/errors";
+import { InternalError, NotFoundError } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import EventRepository from "./event.repository";
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import { ApplicationError, NotFoundError } from "../utils/errors";
-import logger from "../utils/logger";
+import { ApplicationError, NotFoundError } from "@utils/errors";
+import logger from "@utils/logger";
 
 export const handleError = (err: Error, _req: Request, res: Response) => {
     if (err instanceof ApplicationError) {

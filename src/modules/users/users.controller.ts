@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import UserRepostory from "./user.repository";
-import { NotFoundError, InternalError } from "../../utils/errors";
+import { NotFoundError, InternalError } from "@utils/errors";
 
 export default class UserController {
     static async getAll(req, res, next) {
