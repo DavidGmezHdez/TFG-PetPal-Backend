@@ -1,53 +1,50 @@
-import { NotFoundError, InternalError } from "@utils/errors";
+import { NotFoundError, InternalError, BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import ProtectorRepository from "./protector.repository";
 
 export default class ProtectorController {
     static async getAll(req, res, next) {
-        const protectors = await ProtectorRepository.getAll();
-
-        if (protectors === undefined)
-            return next(new NotFoundError(`No protector found`));
-
-        return res.json(protectors);
+        try {
+            const protectors = await ProtectorRepository.getAll();
+            return res.status(200).json(protectors);
+        } catch (error) {
+            next(error);
+        }
     }
 
     static async get(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const protector = await ProtectorRepository.get(id);
-
-        if (protector === undefined)
-            return next(new NotFoundError(`Protector not found`));
-
-        return res.json(protector);
+        try {
+            const { id } = req.params;
+            if (!id) return next(new BadRequest("No id was provided"));
+            const protector = await ProtectorRepository.get(id);
+            return res.status(200).json(protector);
+        } catch (error) {
+            next(error);
+        }
     }
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const createdUser = await ProtectorRepository.create({
+            const createdProtector = await ProtectorRepository.create({
                 ...req.body
             });
-            return res.status(201).json(createdUser);
+            return res.status(201).json(createdProtector);
         } catch (error) {
-            return next(new InternalError(`Error while creating protector`));
+            return next(error);
         }
     }
 
     static async update(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const foundProtector = await ProtectorRepository.get(id);
-
-        if (!foundProtector)
-            return next(new NotFoundError(`Protector doesn't found`));
-
         try {
+            const { id } = req.params;
+            if (!id) return next(new BadRequest("No id was provided"));
             const updatedProtector = await ProtectorRepository.update({
-                id: req.params.id,
+                id: id,
                 ...req.body
             });
             return res.json(updatedProtector);
         } catch (error) {
-            return next(new InternalError(`Error while updating protector`));
+            return next(error);
         }
     }
 
@@ -56,35 +53,27 @@ export default class ProtectorController {
         res: Response,
         next: NextFunction
     ) {
-        const { id } = req.params;
-        const foundProtector = await ProtectorRepository.get(id);
-
-        if (!foundProtector)
-            return next(new NotFoundError(`Protector doesn't found`));
-
         try {
+            const { id } = req.params;
+            if (!id) return next(new BadRequest("No id was provided"));
             const updatedProtector = await ProtectorRepository.update({
-                id: req.params.id,
+                id: id,
                 ...req.body
             });
             return res.json(updatedProtector);
         } catch (error) {
-            return next(new InternalError(`Error while updating protector`));
+            return next(error);
         }
     }
 
     static async destroy(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const foundProtector = await ProtectorRepository.get(id);
-
-        if (!foundProtector)
-            return next(new NotFoundError(`Protector doesn't found`));
-
         try {
-            await ProtectorRepository.destroy(id);
-            return res.status(204).json(null);
+            const { id } = req.params;
+            if (!id) return next(new BadRequest("No id was provided"));
+            const deletedProtector = await ProtectorRepository.destroy(id);
+            return res.status(204).json(deletedProtector);
         } catch (error) {
-            return next(new InternalError(`Error while deleting protector`));
+            return next(error);
         }
     }
 }

@@ -27,7 +27,7 @@ export default class PostRepository {
 
     static async partialUpdate(post) {
         try {
-            const foundPost = await PostModel.findOne({ _id: post.id });
+            const foundPost = await PostModel.findById(post.id);
             if (!foundPost) return new NotFoundError(`Post doesn't exist`);
             const updatedPost = await PostModel.findByIdAndUpdate(
                 { _id: post.id },
@@ -44,7 +44,7 @@ export default class PostRepository {
 
     static async update(post) {
         try {
-            const foundPost = await PostModel.findOne({ _id: post.id });
+            const foundPost = await PostModel.findById(post.id);
             if (!foundPost) return new NotFoundError(`Post doesn't exist`);
             const updatedPost = await PostModel.findByIdAndUpdate(
                 { _id: post.id },
@@ -61,7 +61,7 @@ export default class PostRepository {
 
     static async destroy(id: string) {
         try {
-            const foundPost = await PostModel.findOne({ _id: id });
+            const foundPost = await PostModel.findById(id);
             if (!foundPost) return new NotFoundError(`Post doesn't exist`);
             const deletedPost = await PostModel.findByIdAndDelete(id);
             return deletedPost;

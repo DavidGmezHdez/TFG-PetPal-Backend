@@ -32,7 +32,7 @@ export default class PetRepository {
 
     static async partialUpdate(pet) {
         try {
-            const foundPet = await PetModel.findOne({ _id: pet.id });
+            const foundPet = await PetModel.findById(pet.id);
             if (!foundPet) return new NotFoundError(`Pet doesn't exist`);
             const updatedPet = await PetModel.findByIdAndUpdate(
                 { _id: pet.id },
@@ -49,7 +49,7 @@ export default class PetRepository {
 
     static async update(pet) {
         try {
-            const foundPet = await PetModel.findOne({ _id: pet.id });
+            const foundPet = await PetModel.findById(pet.id);
             if (!foundPet) return new NotFoundError(`Pet doesn't exist`);
             const updatedPet = await PetModel.findByIdAndUpdate(
                 { _id: pet.id },
@@ -66,7 +66,7 @@ export default class PetRepository {
 
     static async destroy(id: string) {
         try {
-            const foundPet = await PetModel.findOne({ _id: id });
+            const foundPet = await PetModel.findById(id);
             if (!foundPet) return new NotFoundError(`Pet doesn't exist`);
             const deletedPet = await PetModel.findByIdAndDelete(id);
             return deletedPet;
