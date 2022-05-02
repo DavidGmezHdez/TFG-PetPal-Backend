@@ -4,11 +4,12 @@
     "description": "",
     "main": "index.ts",
     "scripts": {
-        "start": "set NODE_ENV=local&&ts-node -r tsconfig-paths/register index.ts",
+        "start": "ts-node -r tsconfig-paths/register index.ts",
         "dev": "set NODE_ENV=local&&ts-node -r tsconfig-paths/register index.ts",
         "local": "set NODE_ENV=local&&ts-node -r tsconfig-paths/register index.ts",
         "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-        "lint": "npx eslint ."
+        "lint": "npx eslint .",
+        "deploy": " git push heroku main"
     },
     "author": "DavidGmezHdez",
     "license": "ISC",
