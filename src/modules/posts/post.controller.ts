@@ -8,7 +8,7 @@ export default class PostController {
             const posts = await PostRepository.getAll();
             return res.status(200).json(posts);
         } catch (error) {
-            next(error);
+            return next(error);
         }
     }
 
@@ -19,7 +19,7 @@ export default class PostController {
             const post = await PostRepository.get(id);
             return res.status(200).json(post);
         } catch (error) {
-            next(error);
+            return next(error);
         }
     }
 

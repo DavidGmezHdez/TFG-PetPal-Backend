@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import PetRepository from "./pet.repository";
-import { InternalError, BadRequest } from "@utils/errors";
+import { BadRequest } from "@utils/errors";
 
 export default class PetController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
@@ -8,7 +8,7 @@ export default class PetController {
             const pets = await PetRepository.getAll();
             return res.status(200).json(pets);
         } catch (error) {
-            next(error);
+            return next(error);
         }
     }
 
@@ -19,7 +19,7 @@ export default class PetController {
             const pet = await PetRepository.get(id);
             return res.status(200).json(pet);
         } catch (error) {
-            next(error);
+            return next(error);
         }
     }
 

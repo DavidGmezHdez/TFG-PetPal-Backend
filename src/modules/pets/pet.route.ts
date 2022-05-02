@@ -26,7 +26,12 @@ export const PetRouter = Router()
         passport.authenticate("jwt", { session: false }),
         PetController.destroy
     )
-    .put("/:id", validate(petValidation.update), PetController.update)
+    .put(
+        "/:id",
+        passport.authenticate("jwt", { session: false }),
+        validate(petValidation.update),
+        PetController.update
+    )
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
