@@ -1,35 +1,74 @@
+import { InternalError, NotFoundError } from "@utils/errors";
 import PostModel from "./post.model";
 
 export default class PostRepository {
     static async getAll() {
-        return await PostModel.find();
+        const posts = await PostModel.find();
+        if (posts === undefined) return new NotFoundError(`No posts available`);
+        return posts;
     }
 
     static async get(id: string) {
-        return await PostModel.findById(id);
+        const post = await PostModel.findById(id);
+        if (post === undefined) return new NotFoundError(`No post available`);
+        return post;
     }
 
     static async create(post) {
-        return await PostModel.create(post);
+        try {
+            const createdPost = await PostModel.create(post);
+            return createdPost;
+        } catch (error) {
+            return new InternalError(
+                `Error while creating post: ${error.message}`
+            );
+        }
     }
 
     static async partialUpdate(post) {
-        return await PostModel.findByIdAndUpdate(
-            { _id: post.id },
-            { $set: post },
-            { new: true }
-        );
+        try {
+            const foundPost = await PostModel.findOne({ _id: post.id });
+            if (!foundPost) return new NotFoundError(`Post doesn't exist`);
+            const updatedPost = await PostModel.findByIdAndUpdate(
+                { _id: post.id },
+                { $set: post },
+                { new: true }
+            );
+            return updatedPost;
+        } catch (error) {
+            return new InternalError(
+                `Error while updating post: ${error.message}`
+            );
+        }
     }
 
     static async update(post) {
-        return await PostModel.findByIdAndUpdate(
-            { _id: post.id },
-            { $set: post },
-            { new: true }
-        );
+        try {
+            const foundPost = await PostModel.findOne({ _id: post.id });
+            if (!foundPost) return new NotFoundError(`Post doesn't exist`);
+            const updatedPost = await PostModel.findByIdAndUpdate(
+                { _id: post.id },
+                { $set: post },
+                { new: true }
+            );
+            return updatedPost;
+        } catch (error) {
+            return new InternalError(
+                `Error while updating post: ${error.message}`
+            );
+        }
     }
 
     static async destroy(id: string) {
-        return await PostModel.findByIdAndDelete(id);
+        try {
+            const foundPost = await PostModel.findOne({ _id: id });
+            if (!foundPost) return new NotFoundError(`Post doesn't exist`);
+            const deletedPost = await PostModel.findByIdAndDelete(id);
+            return deletedPost;
+        } catch (error) {
+            return new InternalError(
+                `Error while deleting post: ${error.message}`
+            );
+        }
     }
 }

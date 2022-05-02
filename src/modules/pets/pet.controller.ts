@@ -3,7 +3,7 @@ import PetRepository from "./pet.repository";
 import { InternalError, BadRequest } from "@utils/errors";
 
 export default class PetController {
-    static async getAll(req, res, next) {
+    static async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const pets = await PetRepository.getAll();
             return res.status(200).json(pets);
@@ -71,7 +71,7 @@ export default class PetController {
             const deletedPet = await PetRepository.destroy(id);
             return res.status(204).json(deletedPet);
         } catch (error) {
-            return next(new InternalError(`Error while updating pet`));
+            return next(error);
         }
     }
 }
