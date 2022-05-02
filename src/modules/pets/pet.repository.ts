@@ -4,13 +4,13 @@ import { NotFoundError, InternalError } from "@utils/errors";
 export default class PetRepository {
     static async getAll() {
         const pets = await PetModel.find();
-        if (pets === undefined) throw new NotFoundError(`No pet available`);
+        if (!pets.length) throw new NotFoundError(`No pets available`);
         return pets;
     }
 
     static async get(id: string) {
         const pet = await PetModel.findById(id);
-        if (pet === undefined) throw new NotFoundError(`No pet available`);
+        if (!pet) throw new NotFoundError(`No pet available`);
         return pet;
     }
 
@@ -25,31 +25,28 @@ export default class PetRepository {
     }
 
     static async partialUpdate(pet) {
-        const foundPet = await PetModel.findById(pet.id);
-        if (!foundPet) throw new NotFoundError(`Pet doesn't exist`);
         const updatedPet = await PetModel.findByIdAndUpdate(
             { _id: pet.id },
             { $set: pet },
             { new: true }
         );
+        if (!updatedPet) throw new NotFoundError(`Pet doesn't exist`);
         return updatedPet;
     }
 
     static async update(pet) {
-        const foundPet = await PetModel.findById(pet.id);
-        if (!foundPet) throw new NotFoundError(`Pet doesn't exist`);
         const updatedPet = await PetModel.findByIdAndUpdate(
             { _id: pet.id },
             { $set: pet },
             { new: true }
         );
+        if (!updatedPet) throw new NotFoundError(`Pet doesn't exist`);
         return updatedPet;
     }
 
     static async destroy(id: string) {
-        const foundPet = await PetModel.findById(id);
-        if (!foundPet) return new NotFoundError(`Pet doesn't exist`);
         const deletedPet = await PetModel.findByIdAndDelete(id);
+        if (!deletedPet) return new NotFoundError(`Pet doesn't exist`);
         return deletedPet;
     }
 }

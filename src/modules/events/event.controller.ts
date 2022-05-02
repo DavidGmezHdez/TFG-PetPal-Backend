@@ -1,25 +1,26 @@
-import { InternalError, NotFoundError } from "@utils/errors";
+import { BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import EventRepository from "./event.repository";
 
 export default class EventController {
     static async getAll(req, res, next) {
-        const events = await EventRepository.getAll();
-
-        if (events === undefined)
-            return next(new NotFoundError(`No event available`));
-
-        return res.json(events);
+        try {
+            const events = await EventRepository.getAll();
+            return res.status(200).json(events);
+        } catch (error) {
+            return next(error);
+        }
     }
 
     static async get(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const event = await EventRepository.get(id);
-
-        if (event === undefined)
-            return next(new NotFoundError(`Event not found`));
-
-        return res.json(event);
+        try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const event = await EventRepository.get(id);
+            return res.status(200).json(event);
+        } catch (error) {
+            return next(error);
+        }
     }
 
     static async create(req: Request, res: Response, next: NextFunction) {
@@ -27,23 +28,21 @@ export default class EventController {
             const createdEvent = await EventRepository.create({ ...req.body });
             return res.status(201).json(createdEvent);
         } catch (error) {
-            return next(new InternalError(`Error while creating event`));
+            return next(error);
         }
     }
 
     static async update(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const foundEvent = await EventRepository.get(id);
-
-        if (!foundEvent) return next(new NotFoundError(`Event doesn't exist`));
         try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
             const updatedEvent = await EventRepository.update({
-                id: req.params.id,
+                id: id,
                 ...req.body
             });
             return res.json(updatedEvent);
         } catch (error) {
-            return next(new InternalError(`Error while updating event`));
+            return next(error);
         }
     }
 
@@ -52,33 +51,27 @@ export default class EventController {
         res: Response,
         next: NextFunction
     ) {
-        const { id } = req.params;
-        const foundEvent = await EventRepository.get(id);
-
-        if (!foundEvent) return next(new NotFoundError(`Event doesn't exist`));
-
         try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
             const updatedEvent = await EventRepository.update({
-                id: req.params.id,
+                id: id,
                 ...req.body
             });
             return res.json(updatedEvent);
         } catch (error) {
-            return next(new InternalError(`Error while updating event`));
+            return next(error);
         }
     }
 
     static async destroy(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const foundEvent = await EventRepository.get(id);
-
-        if (!foundEvent) return next(new NotFoundError(`Event doesn't exist`));
-
         try {
-            await EventRepository.destroy(id);
-            return res.status(204).json(null);
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const deletedEvent = await EventRepository.destroy(id);
+            return res.status(204).json(deletedEvent);
         } catch (error) {
-            return next(new InternalError(`Error while deleting event`));
+            return next(error);
         }
     }
 }

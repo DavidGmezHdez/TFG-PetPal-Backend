@@ -4,13 +4,13 @@ import PostModel from "./post.model";
 export default class PostRepository {
     static async getAll() {
         const posts = await PostModel.find();
-        if (posts === undefined) throw new NotFoundError(`No posts available`);
+        if (!posts.length) throw new NotFoundError(`No posts available`);
         return posts;
     }
 
     static async get(id: string) {
         const post = await PostModel.findById(id);
-        if (post === undefined) throw new NotFoundError(`No post available`);
+        if (!post) throw new NotFoundError(`No post available`);
         return post;
     }
 
@@ -20,31 +20,28 @@ export default class PostRepository {
     }
 
     static async partialUpdate(post) {
-        const foundPost = await PostModel.findById(post.id);
-        if (!foundPost) throw new NotFoundError(`Post doesn't exist`);
         const updatedPost = await PostModel.findByIdAndUpdate(
             { _id: post.id },
             { $set: post },
             { new: true }
         );
+        if (!updatedPost) throw new NotFoundError(`Post doesn't exist`);
         return updatedPost;
     }
 
     static async update(post) {
-        const foundPost = await PostModel.findById(post.id);
-        if (!foundPost) throw new NotFoundError(`Post doesn't exist`);
         const updatedPost = await PostModel.findByIdAndUpdate(
             { _id: post.id },
             { $set: post },
             { new: true }
         );
+        if (!updatedPost) throw new NotFoundError(`Post doesn't exist`);
         return updatedPost;
     }
 
     static async destroy(id: string) {
-        const foundPost = await PostModel.findById(id);
-        if (!foundPost) throw new NotFoundError(`Post doesn't exist`);
         const deletedPost = await PostModel.findByIdAndDelete(id);
+        if (!deletedPost) throw new NotFoundError(`Post doesn't exist`);
         return deletedPost;
     }
 }

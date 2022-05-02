@@ -5,11 +5,7 @@ import passport from "passport";
 import userValidation from "./user.validations";
 
 export const UserRouter = Router()
-    .get(
-        "/",
-        passport.authenticate("jwt", { session: false }),
-        UserController.getAll
-    )
+    .get("/", UserController.getAll)
     .get(
         "/:id",
         passport.authenticate("jwt", { session: false }),

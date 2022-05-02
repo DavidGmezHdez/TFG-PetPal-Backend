@@ -1,25 +1,26 @@
 import { NextFunction, Request, Response } from "express";
 import UserRepostory from "./user.repository";
-import { NotFoundError, InternalError } from "@utils/errors";
+import { BadRequest } from "@utils/errors";
 
 export default class UserController {
     static async getAll(req, res, next) {
-        const users = await UserRepostory.getAll();
-
-        if (users === undefined)
-            return next(new NotFoundError(`No user available`));
-
-        return res.json(users);
+        try {
+            const users = await UserRepostory.getAll();
+            return res.status(200).json(users);
+        } catch (error) {
+            return next(error);
+        }
     }
 
     static async get(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const user = await UserRepostory.get(id);
-
-        if (user === undefined)
-            return next(new NotFoundError(`User not found`));
-
-        return res.json(user);
+        try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const user = await UserRepostory.get(id);
+            return res.status(200).json(user);
+        } catch (error) {
+            return next(error);
+        }
     }
 
     static async create(req: Request, res: Response, next: NextFunction) {
@@ -27,24 +28,21 @@ export default class UserController {
             const createdUser = await UserRepostory.create({ ...req.body });
             return res.status(201).json(createdUser);
         } catch (error) {
-            return next(new InternalError(`Error while creating user`));
+            return next(error);
         }
     }
 
     static async update(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const foundUser = await UserRepostory.get(id);
-
-        if (!foundUser) return next(new NotFoundError(`User doesn't exist`));
-
         try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
             const updatedUser = await UserRepostory.update({
-                id: req.params.id,
+                id: id,
                 ...req.body
             });
             return res.json(updatedUser);
         } catch (error) {
-            return next(new InternalError(`Error while updating user`));
+            return next(error);
         }
     }
 
@@ -53,33 +51,27 @@ export default class UserController {
         res: Response,
         next: NextFunction
     ) {
-        const { id } = req.params;
-        const foundUser = await UserRepostory.get(id);
-
-        if (!foundUser) return next(new NotFoundError(`User doesn't exist`));
-
         try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
             const updatedUser = await UserRepostory.update({
-                id: req.params.id,
+                id: id,
                 ...req.body
             });
             return res.json(updatedUser);
         } catch (error) {
-            return next(new InternalError(`Error while updating user`));
+            return next(error);
         }
     }
 
     static async destroy(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
-        const foundUser = await UserRepostory.get(id);
-
-        if (!foundUser) return next(new NotFoundError(`User doesn't exist`));
-
         try {
-            await UserRepostory.destroy(id);
-            return res.status(204).json(null);
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const deletedUser = await UserRepostory.destroy(id);
+            return res.status(204).json(deletedUser);
         } catch (error) {
-            return next(new InternalError(`Error while deleting user`));
+            return next(error);
         }
     }
 }
