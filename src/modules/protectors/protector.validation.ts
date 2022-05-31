@@ -3,7 +3,7 @@ import { Joi } from "express-validation";
 const protectorValidation = {
     create: {
         body: Joi.object({
-            email: Joi.string().required(),
+            email: Joi.string().email().required(),
             name: Joi.string().required(),
             password: Joi.string().required(),
             posts: Joi.array(),
@@ -19,7 +19,7 @@ const protectorValidation = {
         }),
 
         body: Joi.object({
-            email: Joi.string().optional(),
+            email: Joi.string().email().optional(),
             name: Joi.string().optional(),
             password: Joi.string().optional(),
             posts: Joi.array().optional(),
@@ -35,7 +35,7 @@ const protectorValidation = {
         }),
 
         body: Joi.object({
-            email: Joi.string().optional(),
+            email: Joi.string().email().optional(),
             name: Joi.string().optional(),
             password: Joi.string().optional(),
             posts: Joi.array().optional(),

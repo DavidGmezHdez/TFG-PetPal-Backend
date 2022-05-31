@@ -14,6 +14,12 @@ export default class UserRepository {
         return user;
     }
 
+    static async getByData(data: any) {
+        const user = await UserModel.findOne(data);
+        if (!user) throw new NotFoundError(`No user available`);
+        return user;
+    }
+
     static async create(user) {
         const foundUser = await UserModel.findOne({ email: user.email });
         if (foundUser)

@@ -16,13 +16,27 @@ export default class ProtectorRepository {
         return protector;
     }
 
+    static async getByData(data: any) {
+        const protector = await ProtectorModel.findOne(data);
+        if (protector === undefined)
+            throw new NotFoundError(`No protector available`);
+        return protector;
+    }
+
     static async create(protector) {
-        const foundedProtector = await ProtectorModel.findOne({
+        const foundedProtectorName = await ProtectorModel.findOne({
             name: protector.name
         });
-        if (foundedProtector)
+        if (foundedProtectorName)
             throw new InternalError(
                 `Error while creating protector: Protector with that name already exists`
+            );
+        const foundedProtectorEmail = await ProtectorModel.findOne({
+            name: protector.email
+        });
+        if (foundedProtectorEmail)
+            throw new InternalError(
+                `Error while creating protector: Protector with that email already exists`
             );
         const createdProtector = await ProtectorModel.create(protector);
         return createdProtector;
