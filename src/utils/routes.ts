@@ -4,6 +4,7 @@ import { PetRouter } from "@modules/pets";
 import { PostRouter } from "@modules/posts";
 import { ProtectorRouter } from "@modules/protectors";
 import { UserRouter } from "@modules/users";
+import { AuthRouter } from "@modules/auth";
 
 export const router = express
     .Router()
@@ -11,4 +12,5 @@ export const router = express
     .use("/events", EventRouter)
     .use("/posts", PostRouter)
     .use("/users", UserRouter)
-    .use("/protectors", ProtectorRouter);
+    .use("/protectors", ProtectorRouter)
+    .use("/auth", AuthRouter);
