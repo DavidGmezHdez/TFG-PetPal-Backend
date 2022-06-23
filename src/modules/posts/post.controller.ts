@@ -6,6 +6,7 @@ export default class PostController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const posts = await PostRepository.getAll();
+            console.log("post attempt");
             return res.status(200).json(posts);
         } catch (error) {
             return next(error);

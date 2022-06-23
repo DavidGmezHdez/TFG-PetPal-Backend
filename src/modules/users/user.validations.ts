@@ -7,6 +7,7 @@ const userValidation = {
             email: Joi.string().email().required(),
             password: Joi.string().required(),
             posts: Joi.array().optional(),
+            likedPosts: Joi.array().optional(),
             pets: Joi.array().optional(),
             hostEvents: Joi.array().optional(),
             attendingEvents: Joi.array().optional()
@@ -23,6 +24,7 @@ const userValidation = {
             email: Joi.string().email().optional(),
             password: Joi.string().optional(),
             posts: Joi.array().optional(),
+            likedPosts: Joi.array().optional(),
             pets: Joi.array().optional(),
             hostEvents: Joi.array().optional(),
             attendingEvents: Joi.array().optional()
@@ -39,6 +41,7 @@ const userValidation = {
             email: Joi.string().email().optional(),
             password: Joi.string().optional(),
             posts: Joi.array().optional(),
+            likedPosts: Joi.array().optional(),
             pets: Joi.array().optional(),
             hostEvents: Joi.array().optional(),
             attendingEvents: Joi.array().optional()

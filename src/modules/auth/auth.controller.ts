@@ -52,6 +52,7 @@ export default class AuthController {
 
     static async login(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log("login attempt");
             const { email, password } = req.body;
             if (!email || !password)
                 throw new BadRequest("Email and password are required");

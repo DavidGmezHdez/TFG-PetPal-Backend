@@ -5,6 +5,7 @@ const postValidation = {
         body: Joi.object({
             text: Joi.string().required().max(300),
             author: Joi.string().required(),
+            name: Joi.string().required(),
             likes: Joi.number(),
             image: Joi.string().allow("").optional()
         })
@@ -18,6 +19,7 @@ const postValidation = {
         body: Joi.object({
             text: Joi.string().max(300).optional(),
             author: Joi.string().optional(),
+            name: Joi.string().optional(),
             likes: Joi.number().optional(),
             image: Joi.string().allow("").optional()
         })
@@ -31,6 +33,7 @@ const postValidation = {
         body: Joi.object({
             text: Joi.string().max(300).optional(),
             author: Joi.string().optional(),
+            name: Joi.string().optional(),
             likes: Joi.number().optional(),
             image: Joi.string().allow("").optional()
         })

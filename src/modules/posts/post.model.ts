@@ -2,12 +2,16 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const postSchema = new Schema({
-    text: { type: String, maxlength: 300, required: true },
-    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    likes: { type: Number },
-    image: { type: String }
-});
+const postSchema = new Schema(
+    {
+        text: { type: String, maxlength: 300, required: true },
+        author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        name: { type: String, required: true },
+        likes: { type: Number },
+        image: { type: String }
+    },
+    { timestamps: true }
+);
 
 const PostModel = mongoose.model("Post", postSchema);
 

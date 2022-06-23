@@ -1,3 +1,4 @@
+import { UserModel } from "@modules/users";
 import { NotFoundError } from "@utils/errors";
 import PostModel from "./post.model";
 
@@ -16,6 +17,10 @@ export default class PostRepository {
 
     static async create(post) {
         const createdPost = await PostModel.create(post);
+        await UserModel.updateOne(
+            { _id: post.author },
+            { $push: { posts: createdPost._id } }
+        );
         return createdPost;
     }
 
@@ -42,6 +47,11 @@ export default class PostRepository {
     static async destroy(id: string) {
         const deletedPost = await PostModel.findByIdAndDelete(id);
         if (!deletedPost) throw new NotFoundError(`Post doesn't exist`);
+        await UserModel.updateOne(
+            { _id: deletedPost.author },
+            { $pull: { posts: deletedPost._id } },
+            { safe: true, multi: false }
+        );
         return deletedPost;
     }
 }
