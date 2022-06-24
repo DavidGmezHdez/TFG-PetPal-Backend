@@ -26,7 +26,8 @@ export default class PostController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const createdPost = await PostRepository.create({ ...req.body });
+            const post = req.body.data.post;
+            const createdPost = await PostRepository.create(post);
             return res.status(201).json(createdPost);
         } catch (error) {
             return next(error);
