@@ -18,7 +18,6 @@ export const PostRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
-        validate(postValidation.create),
         PostController.create
     )
     .delete(
