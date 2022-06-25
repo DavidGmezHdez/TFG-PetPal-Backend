@@ -35,7 +35,6 @@ export const UserRouter = Router()
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(userValidation.partialUpdate),
         UserController.partialUpdate
     );
 

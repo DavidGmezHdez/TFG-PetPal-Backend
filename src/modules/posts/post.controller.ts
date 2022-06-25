@@ -26,7 +26,7 @@ export default class PostController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const post = req.body.data.post;
+            const post = req.body.post;
             const createdPost = await PostRepository.create(post);
             return res.status(201).json(createdPost);
         } catch (error) {
@@ -55,10 +55,11 @@ export default class PostController {
     ) {
         try {
             const { id } = req.params;
+            const post = req.body.post;
             if (!id) throw new BadRequest("No id was provided");
             const updatedPost = await PostRepository.update({
                 id: id,
-                ...req.body
+                ...post
             });
             return res.json(updatedPost);
         } catch (error) {
