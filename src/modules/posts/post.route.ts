@@ -18,7 +18,6 @@ export const PostRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
-        validate(postValidation.create),
         PostController.create
     )
     .delete(
@@ -29,14 +28,9 @@ export const PostRouter = Router()
     .put(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(postValidation.update),
+
         PostController.update
     )
-    .patch(
-        "/:id",
-        passport.authenticate("jwt", { session: false }),
-        validate(postValidation.partialUpdate),
-        PostController.partialUpdate
-    );
+    .patch("/:id", PostController.partialUpdate);
 
 export default PostRouter;

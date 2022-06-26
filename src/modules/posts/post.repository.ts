@@ -1,9 +1,10 @@
+import { UserModel } from "@modules/users";
 import { NotFoundError } from "@utils/errors";
 import PostModel from "./post.model";
 
 export default class PostRepository {
     static async getAll() {
-        const posts = await PostModel.find();
+        const posts = await PostModel.find().sort({ createdAt: -1 });
         if (!posts.length) throw new NotFoundError(`No posts available`);
         return posts;
     }
