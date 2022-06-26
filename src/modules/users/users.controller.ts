@@ -70,7 +70,7 @@ export default class UserController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const deletedUser = await UserRepostory.destroy(id);
-            return res.status(204).json(deletedUser);
+            return res.status(200).json(deletedUser);
         } catch (error) {
             return next(error);
         }

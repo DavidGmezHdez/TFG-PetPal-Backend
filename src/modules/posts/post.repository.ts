@@ -43,6 +43,11 @@ export default class PostRepository {
     static async destroy(id: string) {
         const deletedPost = await PostModel.findByIdAndDelete(id);
         if (!deletedPost) throw new NotFoundError(`Post doesn't exist`);
+
+        await UserModel.updateMany(
+            { likedPosts: { $elemMatch: { $eq: id } } },
+            { $pull: { likedPosts: { $in: [id] } } }
+        );
         return deletedPost;
     }
 }

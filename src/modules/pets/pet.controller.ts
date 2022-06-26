@@ -69,7 +69,7 @@ export default class PetController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const deletedPet = await PetRepository.destroy(id);
-            return res.status(204).json(deletedPet);
+            return res.status(200).json(deletedPet);
         } catch (error) {
             return next(error);
         }

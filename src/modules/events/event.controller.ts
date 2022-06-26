@@ -6,6 +6,7 @@ export default class EventController {
     static async getAll(req, res, next) {
         try {
             const events = await EventRepository.getAll();
+            console.log({ events });
             return res.status(200).json(events);
         } catch (error) {
             return next(error);
@@ -25,7 +26,8 @@ export default class EventController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const createdEvent = await EventRepository.create({ ...req.body });
+            const event = req.body.event;
+            const createdEvent = await EventRepository.create({ ...event });
             return res.status(201).json(createdEvent);
         } catch (error) {
             return next(error);
@@ -36,9 +38,10 @@ export default class EventController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
+            const event = req.body.event;
             const updatedEvent = await EventRepository.update({
                 id: id,
-                ...req.body
+                ...event
             });
             return res.json(updatedEvent);
         } catch (error) {
@@ -54,10 +57,12 @@ export default class EventController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
+            const event = req.body.event;
             const updatedEvent = await EventRepository.update({
                 id: id,
-                ...req.body
+                ...event
             });
+            console.log({ updatedEvent });
             return res.json(updatedEvent);
         } catch (error) {
             return next(error);
@@ -69,7 +74,7 @@ export default class EventController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const deletedEvent = await EventRepository.destroy(id);
-            return res.status(204).json(deletedEvent);
+            return res.status(200).json(deletedEvent);
         } catch (error) {
             return next(error);
         }

@@ -1,11 +1,13 @@
+import { UserModel } from "@modules/users";
 import { InternalError, NotFoundError } from "@utils/errors";
 import EventModel from "./event.model";
 
 export default class EventRepository {
     static async getAll() {
-        const events = await EventModel.find();
+        const events = await EventModel.find().lean();
         if (!events.length) throw new NotFoundError(`No events available`);
-        return events;
+        const finalEvents = this.fetchUserDataEvents(events);
+        return finalEvents;
     }
 
     static async get(id: string) {
@@ -29,9 +31,10 @@ export default class EventRepository {
             { _id: event.id },
             { $set: event },
             { new: true }
-        );
+        ).lean();
         if (!updatedEvent) throw new NotFoundError(`Event doesn't exist`);
-        return updatedEvent;
+        const finalEvent = this.fetchUserDataEvent(updatedEvent);
+        return finalEvent;
     }
 
     static async update(event) {
@@ -39,14 +42,49 @@ export default class EventRepository {
             { _id: event.id },
             { $set: event },
             { new: true }
-        );
+        ).lean();
         if (!updatedEvent) throw new NotFoundError(`Event doesn't exist`);
-        return updatedEvent;
+        const finalEvent = this.fetchUserDataEvent(updatedEvent);
+        return finalEvent;
     }
 
     static async destroy(id: string) {
         const deletedEvent = await EventModel.findByIdAndDelete(id);
         if (!deletedEvent) throw new NotFoundError(`Event doesn't exist`);
         return deletedEvent;
+    }
+
+    static async fetchUserDataEvents(events) {
+        const finalEvents: any[] = [];
+        for (const event of events) {
+            const host = await UserModel.findOne(event.host._id).lean();
+            const attendants = [];
+            for (const atten of event.attendants) {
+                attendants.push(await UserModel.findOne(atten._id).lean());
+            }
+            const updatedEvent = {
+                ...event,
+                host: host,
+                attendants: attendants
+            };
+            finalEvents.push(updatedEvent);
+        }
+
+        return finalEvents;
+    }
+
+    static async fetchUserDataEvent(event) {
+        const host = await UserModel.findOne(event.host._id).lean();
+        const attendants = [];
+        for (const atten of event.attendants) {
+            attendants.push(await UserModel.findOne(atten._id).lean());
+        }
+        const updatedEvent = {
+            ...event,
+            host: host,
+            attendants: attendants
+        };
+
+        return updatedEvent;
     }
 }
