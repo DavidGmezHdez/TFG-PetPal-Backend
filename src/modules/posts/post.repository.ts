@@ -42,7 +42,6 @@ export default class PostRepository {
 
     static async destroy(id: string) {
         const deletedPost = await PostModel.findByIdAndDelete(id);
-        console.log(deletedPost);
         if (!deletedPost) throw new NotFoundError(`Post doesn't exist`);
         return deletedPost;
     }
