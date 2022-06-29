@@ -4,7 +4,11 @@ import EventModel from "./event.model";
 
 export default class EventRepository {
     static async getAll() {
-        const events = await EventModel.find().lean().sort({ date: -1 });
+        const events = await EventModel.find({
+            date: { $gt: Date.now() }
+        })
+            .lean()
+            .sort({ date: -1 });
         if (!events.length) throw new NotFoundError(`No events available`);
         const finalEvents = this.fetchUserDataEvents(events);
         return finalEvents;
