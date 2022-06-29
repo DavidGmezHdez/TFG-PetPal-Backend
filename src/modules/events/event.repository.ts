@@ -24,7 +24,8 @@ export default class EventRepository {
             throw new InternalError("Ya existe un evento con ese nombre");
         const createdEvent = await EventModel.create(event);
         const host = await UserModel.findOne(event.host._id).lean();
-        return { ...createdEvent, host };
+        const formatedEvent = { ...createdEvent._doc, host: host };
+        return formatedEvent;
     }
 
     static async partialUpdate(event) {
@@ -51,7 +52,12 @@ export default class EventRepository {
 
     static async destroy(id: string) {
         const deletedEvent = await EventModel.findByIdAndDelete(id);
-        if (!deletedEvent) throw new NotFoundError(`Event doesn't exist`);
+        if (!deletedEvent) throw new NotFoundError(`No existe tal evento`);
+
+        await UserModel.updateMany(
+            { attendingEvents: { $elemMatch: { $eq: id } } },
+            { $pull: { attendingEvents: { $in: [id] } } }
+        );
         return deletedEvent;
     }
 
