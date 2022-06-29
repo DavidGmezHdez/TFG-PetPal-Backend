@@ -1,11 +1,17 @@
+import { UserModel } from "@modules/users";
 import { InternalError, NotFoundError } from "@utils/errors";
 import EventModel from "./event.model";
 
 export default class EventRepository {
     static async getAll() {
-        const events = await EventModel.find();
+        const events = await EventModel.find({
+            date: { $gt: Date.now() }
+        })
+            .lean()
+            .sort({ date: -1 });
         if (!events.length) throw new NotFoundError(`No events available`);
-        return events;
+        const finalEvents = this.fetchUserDataEvents(events);
+        return finalEvents;
     }
 
     static async get(id: string) {
@@ -16,12 +22,14 @@ export default class EventRepository {
 
     static async create(event) {
         const foundEvent = await EventModel.findOne({
-            email: event.title
+            title: event.title
         });
         if (foundEvent)
-            throw new InternalError("Event with that title already exists");
-        const createdUser = await EventModel.create(event);
-        return createdUser;
+            throw new InternalError("Ya existe un evento con ese nombre");
+        const createdEvent = await EventModel.create(event);
+        const host = await UserModel.findOne(event.host._id).lean();
+        const formatedEvent = { ...createdEvent._doc, host: host };
+        return formatedEvent;
     }
 
     static async partialUpdate(event) {
@@ -29,9 +37,10 @@ export default class EventRepository {
             { _id: event.id },
             { $set: event },
             { new: true }
-        );
+        ).lean();
         if (!updatedEvent) throw new NotFoundError(`Event doesn't exist`);
-        return updatedEvent;
+        const finalEvent = this.fetchUserDataEvent(updatedEvent);
+        return finalEvent;
     }
 
     static async update(event) {
@@ -39,14 +48,54 @@ export default class EventRepository {
             { _id: event.id },
             { $set: event },
             { new: true }
-        );
+        ).lean();
         if (!updatedEvent) throw new NotFoundError(`Event doesn't exist`);
-        return updatedEvent;
+        const finalEvent = this.fetchUserDataEvent(updatedEvent);
+        return finalEvent;
     }
 
     static async destroy(id: string) {
         const deletedEvent = await EventModel.findByIdAndDelete(id);
-        if (!deletedEvent) throw new NotFoundError(`Event doesn't exist`);
+        if (!deletedEvent) throw new NotFoundError(`No existe tal evento`);
+
+        await UserModel.updateMany(
+            { attendingEvents: { $elemMatch: { $eq: id } } },
+            { $pull: { attendingEvents: { $in: [id] } } }
+        );
         return deletedEvent;
+    }
+
+    static async fetchUserDataEvents(events) {
+        const finalEvents: any[] = [];
+        for (const event of events) {
+            const host = await UserModel.findOne(event.host._id).lean();
+            const attendants = [];
+            for (const atten of event.attendants) {
+                attendants.push(await UserModel.findOne(atten._id).lean());
+            }
+            const updatedEvent = {
+                ...event,
+                host: host,
+                attendants: attendants
+            };
+            finalEvents.push(updatedEvent);
+        }
+
+        return finalEvents;
+    }
+
+    static async fetchUserDataEvent(event) {
+        const host = await UserModel.findOne(event.host._id).lean();
+        const attendants = [];
+        for (const atten of event.attendants) {
+            attendants.push(await UserModel.findOne(atten._id).lean());
+        }
+        const updatedEvent = {
+            ...event,
+            host: host,
+            attendants: attendants
+        };
+
+        return updatedEvent;
     }
 }

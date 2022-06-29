@@ -18,7 +18,6 @@ export const EventRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
-        validate(eventValidation.create),
         EventController.create
     )
     .delete(
@@ -29,13 +28,11 @@ export const EventRouter = Router()
     .put(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(eventValidation.update),
         EventController.update
     )
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(eventValidation.partialUpdate),
         EventController.partialUpdate
     );
 
