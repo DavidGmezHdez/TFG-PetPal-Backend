@@ -9,6 +9,7 @@
         "local": "set NODE_ENV=local&&ts-node -r tsconfig-paths/register index.ts",
         "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
         "lint": "npx eslint .",
+        "validate": "npm  run lint && npm run build",
         "deploy": " git push heroku main"
     },
     "author": "DavidGmezHdez",
