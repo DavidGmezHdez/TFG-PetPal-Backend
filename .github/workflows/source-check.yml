@@ -3,8 +3,6 @@ on: push
 jobs:
     checks:
         runs-on: ubuntu-latest
-        env:
-            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         steps:
             uses: actions/checkout@v2
           - name: Use Node.js 14.x
