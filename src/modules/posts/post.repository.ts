@@ -5,13 +5,13 @@ import PostModel from "./post.model";
 export default class PostRepository {
     static async getAll() {
         const posts = await PostModel.find().sort({ createdAt: -1 });
-        if (!posts.length) throw new NotFoundError(`No posts available`);
+        if (!posts.length) throw new NotFoundError(`No hay posts disponibles`);
         return posts;
     }
 
     static async get(id: string) {
         const post = await PostModel.findById(id);
-        if (!post) throw new NotFoundError(`No post available`);
+        if (!post) throw new NotFoundError(`No hay posts disponibles`);
         return post;
     }
 
@@ -26,7 +26,7 @@ export default class PostRepository {
             { $set: post },
             { new: true }
         );
-        if (!updatedPost) throw new NotFoundError(`Post doesn't exist`);
+        if (!updatedPost) throw new NotFoundError(`No existe tal post`);
         return updatedPost;
     }
 
@@ -36,13 +36,13 @@ export default class PostRepository {
             { $set: post },
             { new: true }
         );
-        if (!updatedPost) throw new NotFoundError(`Post doesn't exist`);
+        if (!updatedPost) throw new NotFoundError(`No existe tal post`);
         return updatedPost;
     }
 
     static async destroy(id: string) {
         const deletedPost = await PostModel.findByIdAndDelete(id);
-        if (!deletedPost) throw new NotFoundError(`Post doesn't exist`);
+        if (!deletedPost) throw new NotFoundError(`No existe tal post`);
 
         await UserModel.updateMany(
             { likedPosts: { $elemMatch: { $eq: id } } },

@@ -4,7 +4,7 @@ import EventModel from "./event.model";
 
 export default class EventRepository {
     static async getAll() {
-        const events = await EventModel.find().lean();
+        const events = await EventModel.find().lean().sort({ date: -1 });
         if (!events.length) throw new NotFoundError(`No events available`);
         const finalEvents = this.fetchUserDataEvents(events);
         return finalEvents;
@@ -18,12 +18,13 @@ export default class EventRepository {
 
     static async create(event) {
         const foundEvent = await EventModel.findOne({
-            email: event.title
+            title: event.title
         });
         if (foundEvent)
-            throw new InternalError("Event with that title already exists");
-        const createdUser = await EventModel.create(event);
-        return createdUser;
+            throw new InternalError("Ya existe un evento con ese nombre");
+        const createdEvent = await EventModel.create(event);
+        const host = await UserModel.findOne(event.host._id).lean();
+        return { ...createdEvent, host };
     }
 
     static async partialUpdate(event) {

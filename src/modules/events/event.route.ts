@@ -18,7 +18,6 @@ export const EventRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
-        validate(eventValidation.create),
         EventController.create
     )
     .delete(
