@@ -17,10 +17,12 @@ export default class ProtectorRepository {
         return protector;
     }
 
-    static async getByData(data: any) {
+    static async getByData(data: any, login: boolean) {
         const protector = await ProtectorModel.findOne(data).lean();
-        if (protector === undefined)
-            throw new NotFoundError(`No protector available`);
+        if (!protector && !login)
+            throw new NotFoundError(
+                `No se ha encontrado una protectora con estos datos`
+            );
         return protector;
     }
 
@@ -33,18 +35,18 @@ export default class ProtectorRepository {
         });
         if (foundedProtectorName)
             throw new InternalError(
-                `Error while creating protector: Protector with that name already exists`
+                `Error: Ya existe una protectora con ese nombre`
             );
         if (foundedUser)
             throw new InternalError(
-                `Error while creating protector: User with that email already exists`
+                `Error: Ya existe un usuario con ese nombre`
             );
         const foundedProtectorEmail = await ProtectorModel.findOne({
             name: protector.email
         });
         if (foundedProtectorEmail)
             throw new InternalError(
-                `Error while creating protector: Protector with that email already exists`
+                `Error: Ya existe una protectora con ese email`
             );
         const createdProtector = await ProtectorModel.create(protector);
         return createdProtector;

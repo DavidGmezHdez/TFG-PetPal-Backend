@@ -7,8 +7,10 @@ const protectorsSchema = new Schema({
     name: { type: String, required: true },
     password: { type: String, required: true },
     posts: [{ type: Schema.Types.ObjectId, ref: "Post", default: null }],
+    likedPosts: [{ type: Schema.Types.ObjectId, ref: "Post", default: null }],
     availablePets: [{ type: Schema.Types.ObjectId, ref: "Pet", default: null }],
     region: { type: String, required: true },
+    direction: { type: String, required: true },
     contactPhone: { type: String, unique: true, required: true }
 });
 

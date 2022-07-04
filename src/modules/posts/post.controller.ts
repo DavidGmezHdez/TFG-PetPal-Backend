@@ -6,7 +6,6 @@ export default class PostController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const posts = await PostRepository.getAll();
-            console.log("post attempt");
             return res.status(200).json(posts);
         } catch (error) {
             return next(error);
@@ -38,9 +37,10 @@ export default class PostController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
+            const post = req.body.post;
             const updatedPost = await PostRepository.update({
                 id: id,
-                ...req.body
+                ...post
             });
             return res.json(updatedPost);
         } catch (error) {
@@ -55,8 +55,8 @@ export default class PostController {
     ) {
         try {
             const { id } = req.params;
-            const post = req.body.post;
             if (!id) throw new BadRequest("No id was provided");
+            const post = req.body.post;
             const updatedPost = await PostRepository.update({
                 id: id,
                 ...post
@@ -72,7 +72,6 @@ export default class PostController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const deletedPost = await PostRepository.destroy(id);
-            console.log({ deletedPost });
             return res.status(200).json(deletedPost);
         } catch (error) {
             return next(error);

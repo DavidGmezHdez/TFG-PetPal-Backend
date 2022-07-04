@@ -33,13 +33,17 @@ export default class AuthController {
         next: NextFunction
     ) {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password, region, direction, contactPhone } =
+                req.body;
             if (!email) throw new BadRequest("No email was provided");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
             await ProtectorRepository.create({
                 name,
                 email,
-                password: encryptedPassword
+                password: encryptedPassword,
+                direction,
+                region,
+                contactPhone
             });
             return res.status(201).json({
                 success: true,
@@ -56,10 +60,15 @@ export default class AuthController {
             const { email, password } = req.body;
             if (!email || !password)
                 throw new BadRequest("Email and password are required");
-            const foundedUser = await UserRepository.getByData({ email });
-            const foundedProtector = await ProtectorRepository.getByData({
-                email
-            });
+            const foundedUser = await UserRepository.getByData({ email }, true);
+            const foundedProtector = await ProtectorRepository.getByData(
+                {
+                    email
+                },
+                true
+            );
+
+            console.log({ foundedUser, foundedProtector });
 
             if (foundedUser) {
                 return AuthController.loginUser(
