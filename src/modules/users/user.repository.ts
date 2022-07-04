@@ -15,9 +15,12 @@ export default class UserRepository {
         return user;
     }
 
-    static async getByData(data: any) {
+    static async getByData(data: any, login: boolean) {
         const user = await UserModel.findOne(data).lean();
-        if (!user) throw new NotFoundError(`No user available`);
+        if (!user && !login)
+            throw new NotFoundError(
+                `No se ha encontrado un usuario con estos datos `
+            );
         return user;
     }
 

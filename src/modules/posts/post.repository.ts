@@ -1,3 +1,4 @@
+import { ProtectorModel } from "@modules/protectors";
 import { UserModel } from "@modules/users";
 import { NotFoundError } from "@utils/errors";
 import PostModel from "./post.model";
@@ -45,6 +46,10 @@ export default class PostRepository {
         if (!deletedPost) throw new NotFoundError(`No existe tal post`);
 
         await UserModel.updateMany(
+            { likedPosts: { $elemMatch: { $eq: id } } },
+            { $pull: { likedPosts: { $in: [id] } } }
+        );
+        await ProtectorModel.updateMany(
             { likedPosts: { $elemMatch: { $eq: id } } },
             { $pull: { likedPosts: { $in: [id] } } }
         );

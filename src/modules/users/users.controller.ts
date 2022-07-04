@@ -36,9 +36,10 @@ export default class UserController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
+            const user = req.body.user;
             const updatedUser = await UserRepostory.update({
                 id: id,
-                ...req.body
+                ...user
             });
             return res.json(updatedUser);
         } catch (error) {

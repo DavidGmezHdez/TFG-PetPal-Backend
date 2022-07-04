@@ -1,4 +1,3 @@
-import { passport } from "passport";
 import { NextFunction, Request, Response } from "express";
 import { BadRequest, NotFoundError } from "@utils/errors";
 import { UserRepository } from "@modules/users";
@@ -33,13 +32,17 @@ export default class AuthController {
         next: NextFunction
     ) {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password, region, direction, contactPhone } =
+                req.body;
             if (!email) throw new BadRequest("No email was provided");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
             await ProtectorRepository.create({
                 name,
                 email,
-                password: encryptedPassword
+                password: encryptedPassword,
+                direction,
+                region,
+                contactPhone
             });
             return res.status(201).json({
                 success: true,
@@ -52,14 +55,18 @@ export default class AuthController {
 
     static async login(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("login attempt");
             const { email, password } = req.body;
             if (!email || !password)
                 throw new BadRequest("Email and password are required");
-            const foundedUser = await UserRepository.getByData({ email });
-            const foundedProtector = await ProtectorRepository.getByData({
-                email
-            });
+            const foundedUser = await UserRepository.getByData({ email }, true);
+            const foundedProtector = await ProtectorRepository.getByData(
+                {
+                    email
+                },
+                true
+            );
+
+            console.log({ foundedUser, foundedProtector });
 
             if (foundedUser) {
                 return AuthController.loginUser(
@@ -90,7 +97,6 @@ export default class AuthController {
         next: NextFunction
     ) {
         try {
-            console.log("bbbb");
             const { email, password } = userPetition;
 
             const compare = await bcrypt.compare(

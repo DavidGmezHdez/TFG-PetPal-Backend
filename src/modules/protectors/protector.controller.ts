@@ -1,4 +1,4 @@
-import { NotFoundError, InternalError, BadRequest } from "@utils/errors";
+import { BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import ProtectorRepository from "./protector.repository";
 
@@ -37,10 +37,14 @@ export default class ProtectorController {
     static async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            if (!id) throw new BadRequest("No id was provided");
+            if (!id)
+                throw new BadRequest(
+                    "No se ha enviado ningún id relacionado con algún usuario"
+                );
+            const protector = req.body.protector;
             const updatedProtector = await ProtectorRepository.update({
                 id: id,
-                ...req.body
+                ...protector
             });
             return res.json(updatedProtector);
         } catch (error) {
@@ -55,10 +59,14 @@ export default class ProtectorController {
     ) {
         try {
             const { id } = req.params;
-            if (!id) throw new BadRequest("No id was provided");
+            if (!id)
+                throw new BadRequest(
+                    "No se ha enviado ningún id relacionado con algún usuario"
+                );
+            const protector = req.body.protector;
             const updatedProtector = await ProtectorRepository.update({
                 id: id,
-                ...req.body
+                ...protector
             });
             return res.json(updatedProtector);
         } catch (error) {

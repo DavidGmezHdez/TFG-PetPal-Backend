@@ -29,13 +29,11 @@ export const ProtectorRouter = Router()
     .put(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(protectorValidation.update),
         ProtectorController.update
     )
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(protectorValidation.partialUpdate),
         ProtectorController.partialUpdate
     );
 
