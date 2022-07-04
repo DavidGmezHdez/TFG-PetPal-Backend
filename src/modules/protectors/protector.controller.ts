@@ -1,4 +1,4 @@
-import { NotFoundError, InternalError, BadRequest } from "@utils/errors";
+import { BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import ProtectorRepository from "./protector.repository";
 
@@ -64,7 +64,6 @@ export default class ProtectorController {
                     "No se ha enviado ningún id relacionado con algún usuario"
                 );
             const protector = req.body.protector;
-            console.log(protector);
             const updatedProtector = await ProtectorRepository.update({
                 id: id,
                 ...protector
