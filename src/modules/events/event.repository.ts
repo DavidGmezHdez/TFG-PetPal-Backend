@@ -48,7 +48,10 @@ export default class EventRepository {
             { _id: event.id },
             { $set: event },
             { new: true }
-        ).lean();
+        )
+            .lean()
+            .populate("host")
+            .populate("attendants");
         if (!updatedEvent) throw new NotFoundError(`Event doesn't exist`);
         const finalEvent = this.fetchUserDataEvent(updatedEvent);
         return finalEvent;

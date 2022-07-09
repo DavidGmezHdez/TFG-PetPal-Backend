@@ -1,48 +1,37 @@
 import { Router } from "express";
-import PostController from "./post.controller";
+import CommentController from "./comments.controller";
 import passport from "passport";
 
-export const PostRouter = Router()
+export const CommentRouter = Router()
     .get(
         "/",
         passport.authenticate("jwt", { session: false }),
-        PostController.getAll
+        CommentController.getAll
     )
     .get(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        PostController.get
+        CommentController.get
     )
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
-        PostController.create
+        CommentController.create
     )
     .delete(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        PostController.destroy
+        CommentController.destroy
     )
     .put(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-
-        PostController.update
+        CommentController.update
     )
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        PostController.partialUpdate
-    )
-    .patch(
-        "/comment/:id",
-        passport.authenticate("jwt", { session: false }),
-        PostController.createComment
-    )
-    .delete(
-        "/comment/:id",
-        passport.authenticate("jwt", { session: false }),
-        PostController.destroyComment
+        CommentController.partialUpdate
     );
 
-export default PostRouter;
+export default CommentRouter;

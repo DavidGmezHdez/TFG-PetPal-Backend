@@ -1,12 +1,12 @@
 import { BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
-import EventRepository from "./event.repository";
+import CommentRepository from "./comments.repository";
 
-export default class EventController {
+export default class CommentController {
     static async getAll(req, res, next) {
         try {
-            const events = await EventRepository.getAll();
-            return res.status(200).json(events);
+            const coments = await CommentRepository.getAll();
+            return res.status(200).json(coments);
         } catch (error) {
             return next(error);
         }
@@ -16,8 +16,8 @@ export default class EventController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
-            const event = await EventRepository.get(id);
-            return res.status(200).json(event);
+            const comment = await CommentRepository.get(id);
+            return res.status(200).json(comment);
         } catch (error) {
             return next(error);
         }
@@ -25,9 +25,11 @@ export default class EventController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const event = req.body.event;
-            const createdEvent = await EventRepository.create({ ...event });
-            return res.status(201).json(createdEvent);
+            const comment = req.body.comment;
+            const createdComment = await CommentRepository.create({
+                ...comment
+            });
+            return res.status(201).json(createdComment);
         } catch (error) {
             return next(error);
         }
@@ -37,12 +39,12 @@ export default class EventController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
-            const event = req.body.event;
-            const updatedEvent = await EventRepository.update({
+            const comment = req.body.comment;
+            const updatedComment = await CommentRepository.update({
                 id: id,
-                ...event
+                ...comment
             });
-            return res.json(updatedEvent);
+            return res.json(updatedComment);
         } catch (error) {
             return next(error);
         }
@@ -56,12 +58,12 @@ export default class EventController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
-            const event = req.body.event;
-            const updatedEvent = await EventRepository.update({
+            const comment = req.body.comment;
+            const updatedComment = await CommentRepository.update({
                 id: id,
-                ...event
+                ...comment
             });
-            return res.json(updatedEvent);
+            return res.json(updatedComment);
         } catch (error) {
             return next(error);
         }
@@ -71,8 +73,8 @@ export default class EventController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
-            const deletedEvent = await EventRepository.destroy(id);
-            return res.status(200).json(deletedEvent);
+            const deletedComment = await CommentRepository.destroy(id);
+            return res.status(200).json(deletedComment);
         } catch (error) {
             return next(error);
         }
