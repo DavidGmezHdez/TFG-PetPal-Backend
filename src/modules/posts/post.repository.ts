@@ -1,3 +1,4 @@
+import { CommentRepository } from "@modules/comments";
 import { ProtectorModel } from "@modules/protectors";
 import { UserModel } from "@modules/users";
 import { NotFoundError } from "@utils/errors";
@@ -5,7 +6,9 @@ import PostModel from "./post.model";
 
 export default class PostRepository {
     static async getAll() {
-        const posts = await PostModel.find().sort({ createdAt: -1 });
+        const posts = await PostModel.find()
+            .sort({ createdAt: -1 })
+            .populate("comments");
         if (!posts.length) throw new NotFoundError(`No hay posts disponibles`);
         return posts;
     }
@@ -54,5 +57,26 @@ export default class PostRepository {
             { $pull: { likedPosts: { $in: [id] } } }
         );
         return deletedPost;
+    }
+
+    static async createComment(id, comment) {
+        const createdComment = await CommentRepository.create(comment);
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            { _id: id },
+            { $push: { comments: createdComment._id } },
+            { new: true }
+        ).populate("comments");
+
+        return updatedPost;
+    }
+
+    static async destroyComment(id: string, commentId: string) {
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            { _id: id },
+            { $pull: { comments: { $in: [commentId] } } },
+            { new: true }
+        ).populate("comments");
+        await CommentRepository.destroy(commentId);
+        return updatedPost;
     }
 }

@@ -66,8 +66,6 @@ export default class AuthController {
                 true
             );
 
-            console.log({ foundedUser, foundedProtector });
-
             if (foundedUser) {
                 return AuthController.loginUser(
                     { email, password },

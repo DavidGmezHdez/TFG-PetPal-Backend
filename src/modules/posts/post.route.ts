@@ -1,8 +1,6 @@
 import { Router } from "express";
-import { validate } from "express-validation";
 import PostController from "./post.controller";
 import passport from "passport";
-import postValidation from "./post.validation";
 
 export const PostRouter = Router()
     .get(
@@ -31,6 +29,20 @@ export const PostRouter = Router()
 
         PostController.update
     )
-    .patch("/:id", PostController.partialUpdate);
+    .patch(
+        "/:id",
+        passport.authenticate("jwt", { session: false }),
+        PostController.partialUpdate
+    )
+    .patch(
+        "/comment/:id",
+        passport.authenticate("jwt", { session: false }),
+        PostController.createComment
+    )
+    .delete(
+        "/comment/:id",
+        passport.authenticate("jwt", { session: false }),
+        PostController.destroyComment
+    );
 
 export default PostRouter;

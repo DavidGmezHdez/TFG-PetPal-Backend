@@ -6,7 +6,6 @@ export default class EventController {
     static async getAll(req, res, next) {
         try {
             const events = await EventRepository.getAll();
-            console.log({ events });
             return res.status(200).json(events);
         } catch (error) {
             return next(error);
@@ -62,7 +61,6 @@ export default class EventController {
                 id: id,
                 ...event
             });
-            console.log({ updatedEvent });
             return res.json(updatedEvent);
         } catch (error) {
             return next(error);
