@@ -71,12 +71,8 @@ export default class PostController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
-            const comment = req.body.comment;
-            const updatedPost = await PostRepository.destroyComment(
-                id,
-                comment
-            );
-            return res.json(updatedPost);
+            const deletedEvent = await PostRepository.destroy(id);
+            return res.status(200).json(deletedEvent);
         } catch (error) {
             return next(error);
         }

@@ -4,19 +4,28 @@ import UserModel from "./user.model";
 
 export default class UserRepository {
     static async getAll() {
-        const users = await UserModel.find().lean();
+        const users = await UserModel.find()
+            .lean()
+            .populate("posts")
+            .populate("hostEvents");
         if (!users.length) throw new NotFoundError(`No users available`);
         return users;
     }
 
     static async get(id: string) {
-        const user = await UserModel.findById(id).lean();
+        const user = await UserModel.findById(id)
+            .lean()
+            .populate("posts")
+            .populate("hostEvents");
         if (!user) throw new NotFoundError(`No user available`);
         return user;
     }
 
     static async getByData(data: any, login: boolean) {
-        const user = await UserModel.findOne(data).lean();
+        const user = await UserModel.findOne(data)
+            .lean()
+            .populate("posts")
+            .populate("hostEvents");
         if (!user && !login)
             throw new NotFoundError(
                 `No se ha encontrado un usuario con estos datos `
@@ -40,7 +49,10 @@ export default class UserRepository {
             { _id: user.id },
             { $set: user },
             { new: true }
-        );
+        )
+            .lean()
+            .populate("posts")
+            .populate("hostEvents");
         if (!updatedUser) throw new NotFoundError(`User doesn't exist`);
         return updatedUser;
     }
@@ -50,7 +62,10 @@ export default class UserRepository {
             { _id: user.id },
             { $set: user },
             { new: true }
-        ).lean();
+        )
+            .lean()
+            .populate("posts")
+            .populate("hostEvents");
         if (!updatedUser) throw new NotFoundError(`User doesn't exist`);
         return updatedUser;
     }

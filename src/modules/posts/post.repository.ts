@@ -48,6 +48,9 @@ export default class PostRepository {
         const deletedPost = await PostModel.findByIdAndDelete(id);
         if (!deletedPost) throw new NotFoundError(`No existe tal post`);
 
+        for (const comment of deletedPost.comments) {
+            await CommentRepository.destroy(comment._id);
+        }
         await UserModel.updateMany(
             { likedPosts: { $elemMatch: { $eq: id } } },
             { $pull: { likedPosts: { $in: [id] } } }

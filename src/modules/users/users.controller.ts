@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import UserRepostory from "./user.repository";
 import { BadRequest } from "@utils/errors";
+import bcrypt from "bcrypt";
 
 export default class UserController {
     static async getAll(req, res, next) {
@@ -56,9 +57,15 @@ export default class UserController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const user = req.body.user;
+            const foundedUser = await UserRepostory.get(id);
+            const password = req.body.user.password;
+            const encryptedPassword = password
+                ? await UserController.changePassword(password, foundedUser)
+                : foundedUser.password;
+            const finalUser = { ...user, password: encryptedPassword };
             const updatedUser = await UserRepostory.update({
                 id: id,
-                ...user
+                ...finalUser
             });
             return res.json(updatedUser);
         } catch (error) {
@@ -74,6 +81,16 @@ export default class UserController {
             return res.status(200).json(deletedUser);
         } catch (error) {
             return next(error);
+        }
+    }
+
+    static async changePassword(password, foundedUser) {
+        const compare = await bcrypt.compare(password, foundedUser.password);
+        // If user passwords are different that means that the user wants to change the password of their account
+        if (!compare) {
+            return bcrypt.hashSync(password, 10);
+        } else {
+            return foundedUser.password;
         }
     }
 }
