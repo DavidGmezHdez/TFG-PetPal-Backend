@@ -25,7 +25,8 @@ export default class PetController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const createdPet = await PetRepository.create({ ...req.body });
+            const pet = req.body.pet;
+            const createdPet = await PetRepository.create(pet);
             return res.status(201).json(createdPet);
         } catch (error) {
             return next(error);
@@ -36,9 +37,10 @@ export default class PetController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
+            const pet = req.body.pet;
             const updatedPet = await PetRepository.update({
                 id: id,
-                ...req.body
+                ...pet
             });
             return res.json(updatedPet);
         } catch (error) {
@@ -54,9 +56,10 @@ export default class PetController {
         try {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
+            const pet = req.body.pet;
             const updatedPet = await PetRepository.update({
                 id: id,
-                ...req.body
+                ...pet
             });
             return res.json(updatedPet);
         } catch (error) {

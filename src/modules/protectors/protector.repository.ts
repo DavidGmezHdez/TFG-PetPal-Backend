@@ -13,7 +13,8 @@ export default class ProtectorRepository {
     static async get(id: string) {
         const protector = await ProtectorModel.findById(id)
             .lean()
-            .populate("posts");
+            .populate("posts")
+            .populate("pets");
         if (protector === undefined)
             throw new NotFoundError(`No protector available`);
         return protector;
@@ -22,7 +23,8 @@ export default class ProtectorRepository {
     static async getByData(data: any, login: boolean) {
         const protector = await ProtectorModel.findOne(data)
             .lean()
-            .populate("posts");
+            .populate("posts")
+            .populate("pets");
         if (!protector && !login)
             throw new NotFoundError(
                 `No se ha encontrado una protectora con estos datos`
@@ -66,7 +68,8 @@ export default class ProtectorRepository {
             { new: true }
         )
             .lean()
-            .populate("posts");
+            .populate("posts")
+            .populate("pets");
         return updatedProtector;
     }
 
@@ -80,7 +83,8 @@ export default class ProtectorRepository {
             { new: true }
         )
             .lean()
-            .populate("posts");
+            .populate("posts")
+            .populate("pets");
         return updatedProtector;
     }
 
