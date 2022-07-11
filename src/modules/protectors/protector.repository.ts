@@ -11,14 +11,18 @@ export default class ProtectorRepository {
     }
 
     static async get(id: string) {
-        const protector = await ProtectorModel.findById(id).lean();
+        const protector = await ProtectorModel.findById(id)
+            .lean()
+            .populate("posts");
         if (protector === undefined)
             throw new NotFoundError(`No protector available`);
         return protector;
     }
 
     static async getByData(data: any, login: boolean) {
-        const protector = await ProtectorModel.findOne(data).lean();
+        const protector = await ProtectorModel.findOne(data)
+            .lean()
+            .populate("posts");
         if (!protector && !login)
             throw new NotFoundError(
                 `No se ha encontrado una protectora con estos datos`
@@ -60,7 +64,9 @@ export default class ProtectorRepository {
             { _id: protector.id },
             { $set: protector },
             { new: true }
-        ).lean();
+        )
+            .lean()
+            .populate("posts");
         return updatedProtector;
     }
 
@@ -72,7 +78,9 @@ export default class ProtectorRepository {
             { _id: protector.id },
             { $set: protector },
             { new: true }
-        ).lean();
+        )
+            .lean()
+            .populate("posts");
         return updatedProtector;
     }
 

@@ -1,6 +1,7 @@
 import { BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import ProtectorRepository from "./protector.repository";
+import bcrypt from "bcrypt";
 
 export default class ProtectorController {
     static async getAll(req, res, next) {
@@ -64,9 +65,23 @@ export default class ProtectorController {
                     "No se ha enviado ningún id relacionado con algún usuario"
                 );
             const protector = req.body.protector;
+            const password = req.body.protector.password;
+            const foundedProtector = await ProtectorRepository.get(id);
+
+            const encryptedPassword = password
+                ? await ProtectorController.changePassword(
+                      password,
+                      foundedProtector
+                  )
+                : foundedProtector.password;
+
+            const finalProtector = {
+                ...protector,
+                password: encryptedPassword
+            };
             const updatedProtector = await ProtectorRepository.update({
                 id: id,
-                ...protector
+                ...finalProtector
             });
             return res.json(updatedProtector);
         } catch (error) {
@@ -82,6 +97,20 @@ export default class ProtectorController {
             return res.status(204).json(deletedProtector);
         } catch (error) {
             return next(error);
+        }
+    }
+
+    static async changePassword(password, foundedProtector) {
+        const compare = await bcrypt.compare(
+            password,
+            foundedProtector.password
+        );
+
+        // If protector passwords are different that means that the user wants to change the password of their account
+        if (!compare) {
+            return await bcrypt.hashSync(password, 10);
+        } else {
+            return foundedProtector.password;
         }
     }
 }
