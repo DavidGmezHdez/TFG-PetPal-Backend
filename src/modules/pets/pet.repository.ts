@@ -14,6 +14,12 @@ export default class PetRepository {
         return pet;
     }
 
+    static async getByData(data: any) {
+        const pets = await PetModel.find(data).lean().populate("protector");
+        if (!pets) throw new NotFoundError(`No se encontraron mascotas `);
+        return pets;
+    }
+
     static async create(pet) {
         const foundedPet = await PetModel.findOne({ name: pet.name });
         if (foundedPet)

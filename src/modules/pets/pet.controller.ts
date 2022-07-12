@@ -5,7 +5,17 @@ import { BadRequest } from "@utils/errors";
 export default class PetController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            const pets = await PetRepository.getAll();
+            console.log(req.params, req.body, req.query);
+            const ageSelected = req.query.age as string;
+            const ageFixed = PetController.ageFixed(ageSelected);
+            const query = ageSelected
+                ? {
+                      ...req.query,
+                      age: ageFixed
+                  }
+                : { ...req.query };
+            console.log(query);
+            const pets = await PetRepository.getByData(query);
             return res.status(200).json(pets);
         } catch (error) {
             return next(error);
@@ -75,6 +85,21 @@ export default class PetController {
             return res.status(200).json(deletedPet);
         } catch (error) {
             return next(error);
+        }
+    }
+
+    static ageFixed(age: string) {
+        switch (age) {
+            case "0":
+                return { $gte: 0, $lte: 5 };
+            case "1":
+                return { $gte: 5, $lte: 10 };
+            case "2":
+                return { $gte: 10, $lte: 15 };
+            case "3":
+                return { $gte: 15, $lte: 20 };
+            default:
+                return { $gte: 0, $lte: 20 };
         }
     }
 }
