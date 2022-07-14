@@ -18,7 +18,6 @@ export const PetRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
-        validate(petValidation.create),
         PetController.create
     )
     .delete(
@@ -29,13 +28,11 @@ export const PetRouter = Router()
     .put(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(petValidation.update),
         PetController.update
     )
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        validate(petValidation.partialUpdate),
         PetController.partialUpdate
     );
 

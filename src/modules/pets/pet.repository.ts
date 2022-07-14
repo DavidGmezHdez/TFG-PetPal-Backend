@@ -3,15 +3,21 @@ import { NotFoundError, InternalError } from "@utils/errors";
 
 export default class PetRepository {
     static async getAll() {
-        const pets = await PetModel.find();
+        const pets = await PetModel.find().populate("protector");
         if (!pets.length) throw new NotFoundError(`No pets available`);
         return pets;
     }
 
     static async get(id: string) {
-        const pet = await PetModel.findById(id);
+        const pet = await PetModel.findById(id).populate("protector");
         if (!pet) throw new NotFoundError(`No pet available`);
         return pet;
+    }
+
+    static async getByData(data: any) {
+        const pets = await PetModel.find(data).lean().populate("protector");
+        if (!pets) throw new NotFoundError(`No se encontraron mascotas `);
+        return pets;
     }
 
     static async create(pet) {
@@ -29,7 +35,7 @@ export default class PetRepository {
             { _id: pet.id },
             { $set: pet },
             { new: true }
-        );
+        ).populate("protector");
         if (!updatedPet) throw new NotFoundError(`Pet doesn't exist`);
         return updatedPet;
     }
@@ -39,7 +45,7 @@ export default class PetRepository {
             { _id: pet.id },
             { $set: pet },
             { new: true }
-        );
+        ).populate("protector");
         if (!updatedPet) throw new NotFoundError(`Pet doesn't exist`);
         return updatedPet;
     }
