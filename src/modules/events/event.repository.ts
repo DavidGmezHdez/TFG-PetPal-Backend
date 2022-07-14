@@ -20,6 +20,15 @@ export default class EventRepository {
         return event;
     }
 
+    static async getByTitle(title: string) {
+        const event = await EventModel.find({
+            title: { $regex: title },
+            date: { $gt: Date.now() }
+        });
+        if (!event) throw new NotFoundError(`No event available`);
+        return event;
+    }
+
     static async create(event) {
         const foundEvent = await EventModel.findOne({
             title: event.title
