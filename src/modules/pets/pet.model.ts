@@ -7,12 +7,11 @@ const petSchema = new Schema({
     type: { type: String, required: true },
     description: { type: String, required: true },
     age: { type: Number, required: true },
-    race: { type: String, required: true },
+    race: { type: String },
     color: { type: String },
     size: { type: String },
     image: { type: String },
     region: { type: String },
-    specialTraits: [{ type: String }],
     owner: { type: Schema.Types.ObjectId, ref: "User", default: null },
     protector: { type: Schema.Types.ObjectId, ref: "Protector" }
 });
