@@ -5,7 +5,6 @@ import { BadRequest } from "@utils/errors";
 export default class PetController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log(req.params, req.body, req.query);
             const ageSelected = req.query.age as string;
             const ageFixed = PetController.ageFixed(ageSelected);
             const query = ageSelected
@@ -14,7 +13,6 @@ export default class PetController {
                       age: ageFixed
                   }
                 : { ...req.query };
-            console.log(query);
             const pets = await PetRepository.getByData(query);
             return res.status(200).json(pets);
         } catch (error) {
