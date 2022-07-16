@@ -33,7 +33,6 @@ export const PetRouter = Router()
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
-        upload.single("image"),
         PetController.partialUpdate
     );
 
