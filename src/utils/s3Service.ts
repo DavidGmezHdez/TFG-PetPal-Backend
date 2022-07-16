@@ -20,7 +20,16 @@ const s3DeleteV2 = async (key) => {
     return s3.deleteObject(param).promise();
 };
 
+const s3UpdateV2 = async (key, file) => {
+    const param = {
+        Bucket: process.env.AWS_BUCKET_NAME || "aws-s3-pet-pal",
+        Key: key,
+        Body: file
+    };
+    return s3.putObject(param).promise();
+};
 export const s3Service = {
     s3UploadV2,
-    s3DeleteV2
+    s3DeleteV2,
+    s3UpdateV2
 };

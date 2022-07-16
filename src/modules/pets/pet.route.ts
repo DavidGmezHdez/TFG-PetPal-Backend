@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { validate } from "express-validation";
 import PetController from "./pet.controller";
 import passport from "passport";
-import petValidation from "./pet.validation";
+import { upload } from "@utils/multer";
 
 export const PetRouter = Router()
     .get(
@@ -18,6 +17,7 @@ export const PetRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
+        upload.single("image"),
         PetController.create
     )
     .delete(
@@ -33,6 +33,7 @@ export const PetRouter = Router()
     .patch(
         "/:id",
         passport.authenticate("jwt", { session: false }),
+        upload.single("image"),
         PetController.partialUpdate
     );
 
