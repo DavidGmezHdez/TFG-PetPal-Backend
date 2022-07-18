@@ -3,16 +3,17 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const petSchema = new Schema({
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
     type: { type: String, required: true },
+    sex: { type: String, required: true },
     description: { type: String, required: true },
     age: { type: Number, required: true },
-    race: { type: String, required: true },
+    race: { type: String },
     color: { type: String },
     size: { type: String },
     image: { type: String },
+    imageKey: { type: String },
     region: { type: String },
-    specialTraits: [{ type: String }],
     owner: { type: Schema.Types.ObjectId, ref: "User", default: null },
     protector: { type: Schema.Types.ObjectId, ref: "Protector" }
 });

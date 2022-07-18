@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import PetRepository from "./pet.repository";
 import { BadRequest } from "@utils/errors";
+import { s3Service } from "@utils/s3Service";
 
 export default class PetController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
@@ -33,8 +34,10 @@ export default class PetController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const pet = req.body.pet;
-            const createdPet = await PetRepository.create(pet);
+            const createdPet = await PetRepository.create({
+                pet: req.body,
+                image: req.file
+            });
             return res.status(201).json(createdPet);
         } catch (error) {
             return next(error);

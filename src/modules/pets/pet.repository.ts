@@ -1,3 +1,4 @@
+import { s3Service } from "@utils/s3Service";
 import PetModel from "./pet.model";
 import { NotFoundError, InternalError } from "@utils/errors";
 
@@ -20,13 +21,22 @@ export default class PetRepository {
         return pets;
     }
 
-    static async create(pet) {
+    static async create({ pet, image }) {
         const foundedPet = await PetModel.findOne({ name: pet.name });
         if (foundedPet)
             return new InternalError(
                 `Error while creating pet: Pet with that name already exists`
             );
-        const createdPet = await PetModel.create(pet);
+
+        const s3Result = image
+            ? await s3Service.s3UploadV2(image, "pets")
+            : { Location: undefined, Key: undefined };
+        const sendPet = {
+            ...pet,
+            image: s3Result.Location,
+            imageKey: s3Result.Key
+        };
+        const createdPet = await PetModel.create(sendPet);
         return createdPet;
     }
 
@@ -52,6 +62,7 @@ export default class PetRepository {
 
     static async destroy(id: string) {
         const deletedPet = await PetModel.findByIdAndDelete(id);
+        await s3Service.s3DeleteV2(deletedPet.imageKey);
         if (!deletedPet) return new NotFoundError(`Pet doesn't exist`);
         return deletedPet;
     }
