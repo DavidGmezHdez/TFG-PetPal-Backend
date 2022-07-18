@@ -1,5 +1,6 @@
 import { UserModel } from "@modules/users";
 import { InternalError, NotFoundError } from "@utils/errors";
+import { s3Service } from "@utils/s3Service";
 import ProtectorModel from "./protector.model";
 
 export default class ProtectorRepository {
@@ -58,10 +59,17 @@ export default class ProtectorRepository {
         return createdProtector;
     }
 
-    static async partialUpdate(protector) {
-        const foundedProtector = await ProtectorModel.findById(protector.id);
+    static async partialUpdate({ protector, image }) {
+        const foundedProtector = await ProtectorModel.findById(
+            protector.id
+        ).lean();
         if (!foundedProtector)
             throw new NotFoundError(`Protector doesn't exist`);
+
+        if (image) {
+            await s3Service.s3UpdateV2(image, foundedProtector.imageKey);
+        }
+
         const updatedProtector = await ProtectorModel.findByIdAndUpdate(
             { _id: protector.id },
             { $set: protector },
@@ -73,7 +81,7 @@ export default class ProtectorRepository {
         return updatedProtector;
     }
 
-    static async update(protector) {
+    static async update({ protector }) {
         const foundedProtector = await ProtectorModel.findById(protector.id);
         if (!foundedProtector)
             throw new NotFoundError(`Protector doesn't exist`);

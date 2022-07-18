@@ -64,8 +64,10 @@ export default class ProtectorController {
                 throw new BadRequest(
                     "No se ha enviado ningún id relacionado con algún usuario"
                 );
-            const protector = req.body.protector;
-            const password = req.body.protector.password;
+            const protector = req.body;
+            const password = req.body.password;
+            const image = req.file;
+            console.log(protector, image, req.headers);
             const foundedProtector = await ProtectorRepository.get(id);
 
             const encryptedPassword = password
@@ -77,11 +79,12 @@ export default class ProtectorController {
 
             const finalProtector = {
                 ...protector,
+                id: id,
                 password: encryptedPassword
             };
-            const updatedProtector = await ProtectorRepository.update({
-                id: id,
-                ...finalProtector
+            const updatedProtector = await ProtectorRepository.partialUpdate({
+                protector: finalProtector,
+                image
             });
             return res.json(updatedProtector);
         } catch (error) {
