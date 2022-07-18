@@ -1,3 +1,4 @@
+import { PetModel } from "@modules/pets";
 import { UserModel } from "@modules/users";
 import { InternalError, NotFoundError } from "@utils/errors";
 import { s3Service } from "@utils/s3Service";
@@ -59,16 +60,17 @@ export default class ProtectorRepository {
         return createdProtector;
     }
 
-    static async partialUpdate({ protector, image }) {
-        const foundedProtector = await ProtectorModel.findById(
-            protector.id
-        ).lean();
-        if (!foundedProtector)
-            throw new NotFoundError(`Protector doesn't exist`);
+    static async partialUpdate(protector) {
+        console.log("PROTECTOR", protector);
 
-        if (image) {
-            await s3Service.s3UpdateV2(image, foundedProtector.imageKey);
-        }
+        // We must update the region of the pets the protector has
+
+        const foundedProtector = await ProtectorModel.findById(protector._id);
+        await PetModel.updateMany(
+            { _id: { $in: foundedProtector.pets } },
+            { $set: { region: protector.region } },
+            { multi: true }
+        );
 
         const updatedProtector = await ProtectorModel.findByIdAndUpdate(
             { _id: protector.id },
@@ -78,15 +80,16 @@ export default class ProtectorRepository {
             .lean()
             .populate("posts")
             .populate("pets");
+        console.log("UPDATED PROTECTOR", updatedProtector);
         return updatedProtector;
     }
 
-    static async update({ protector }) {
+    static async update(protector) {
         const foundedProtector = await ProtectorModel.findById(protector.id);
         if (!foundedProtector)
             throw new NotFoundError(`Protector doesn't exist`);
         const updatedProtector = await ProtectorModel.findByIdAndUpdate(
-            { _id: protector.id },
+            { _id: protector.id }, //
             { $set: protector },
             { new: true }
         )
@@ -104,5 +107,19 @@ export default class ProtectorRepository {
             id
         ).lean();
         return deletedProtector;
+    }
+
+    static async updateImage(id: string, image) {
+        const foundedProtector = await ProtectorModel.findById(id).lean();
+        if (!foundedProtector)
+            throw new NotFoundError(`Protector doesn't exist`);
+        if (!foundedProtector)
+            throw new NotFoundError(`Protector doesn't exist`);
+
+        console.log(foundedProtector.imageKey);
+        if (image) {
+            await s3Service.s3UpdateV2(image, foundedProtector.imageKey);
+        }
+        return foundedProtector;
     }
 }

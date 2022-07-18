@@ -64,10 +64,8 @@ export default class ProtectorController {
                 throw new BadRequest(
                     "No se ha enviado ningún id relacionado con algún usuario"
                 );
-            const protector = req.body;
-            const password = req.body.password;
-            const image = req.file;
-            console.log(protector, image, req.headers);
+            const protector = req.body.protector;
+            const password = req.body.protector.password;
             const foundedProtector = await ProtectorRepository.get(id);
 
             const encryptedPassword = password
@@ -79,12 +77,11 @@ export default class ProtectorController {
 
             const finalProtector = {
                 ...protector,
-                id: id,
                 password: encryptedPassword
             };
             const updatedProtector = await ProtectorRepository.partialUpdate({
-                protector: finalProtector,
-                image
+                id: id,
+                ...finalProtector
             });
             return res.json(updatedProtector);
         } catch (error) {
@@ -98,6 +95,23 @@ export default class ProtectorController {
             if (!id) throw new BadRequest("No id was provided");
             const deletedProtector = await ProtectorRepository.destroy(id);
             return res.status(204).json(deletedProtector);
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+    static async imageUpdate(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const image = req.file;
+
+            console.log(image);
+            const updatedProtector = await ProtectorRepository.updateImage(
+                id,
+                image
+            );
+            return res.status(200).json(updatedProtector);
         } catch (error) {
             return next(error);
         }
