@@ -63,7 +63,7 @@ export default class UserController {
                 ? await UserController.changePassword(password, foundedUser)
                 : foundedUser.password;
             const finalUser = { ...user, password: encryptedPassword };
-            const updatedUser = await UserRepostory.update({
+            const updatedUser = await UserRepostory.partialUpdate({
                 id: id,
                 ...finalUser
             });
@@ -79,6 +79,18 @@ export default class UserController {
             if (!id) throw new BadRequest("No id was provided");
             const deletedUser = await UserRepostory.destroy(id);
             return res.status(200).json(deletedUser);
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+    static async imageUpdate(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const image = req.file;
+            const updatedUser = await UserRepostory.updateImage(id, image);
+            return res.status(200).json(updatedUser);
         } catch (error) {
             return next(error);
         }

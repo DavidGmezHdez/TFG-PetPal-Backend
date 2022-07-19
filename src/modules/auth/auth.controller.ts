@@ -10,12 +10,16 @@ export default class AuthController {
     static async registerUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { name, email, password } = req.body;
+            const image = req.file;
             if (!email) throw new BadRequest("No email was provided");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
             await UserRepository.create({
-                name,
-                email,
-                password: encryptedPassword
+                user: {
+                    name,
+                    email,
+                    password: encryptedPassword
+                },
+                image
             });
 
             return res.status(201).json({
@@ -35,21 +39,19 @@ export default class AuthController {
         try {
             const { name, email, password, region, direction, contactPhone } =
                 req.body;
-            console.log(req.body);
-            console.log(req.file);
             const image = req.file;
             if (!email) throw new BadRequest("No email was provided");
-            const s3Result = await s3Service.s3UploadV2(image, "protectors");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
             await ProtectorRepository.create({
-                name,
-                email,
-                password: encryptedPassword,
-                direction,
-                region,
-                contactPhone,
-                image: s3Result.Location,
-                imageKey: s3Result.Key
+                protector: {
+                    name,
+                    email,
+                    password: encryptedPassword,
+                    direction,
+                    region,
+                    contactPhone
+                },
+                image
             });
             return res.status(201).json({
                 success: true,

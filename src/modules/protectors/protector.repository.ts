@@ -34,38 +34,41 @@ export default class ProtectorRepository {
         return protector;
     }
 
-    static async create(protector) {
+    static async create({ protector, image }) {
         const foundedProtectorName = await ProtectorModel.findOne({
             name: protector.name
         });
         const foundedUser = await UserModel.findOne({
             email: protector.email
         });
-        if (foundedProtectorName) {
-            await s3Service.s3DeleteV2(protector.imageKey);
+        if (foundedProtectorName)
             throw new InternalError(
                 `Error: Ya existe una protectora con ese nombre`
             );
-        }
 
-        if (foundedUser) {
-            await s3Service.s3DeleteV2(protector.imageKey);
+        if (foundedUser)
             throw new InternalError(
                 `Error: Ya existe un usuario con ese nombre`
             );
-        }
 
         const foundedProtectorEmail = await ProtectorModel.findOne({
             email: protector.email
         });
-        if (foundedProtectorEmail) {
-            await s3Service.s3DeleteV2(protector.imageKey);
+        if (foundedProtectorEmail)
             throw new InternalError(
                 `Error: Ya existe una protectora con ese email`
             );
-        }
 
-        const createdProtector = await ProtectorModel.create(protector);
+        const s3Result = image
+            ? await s3Service.s3UploadV2(image, "protectors")
+            : { Location: undefined, Key: undefined };
+
+        const sendProtector = {
+            ...protector,
+            image: s3Result.Location,
+            imageKey: s3Result.Key
+        };
+        const createdProtector = await ProtectorModel.create(sendProtector);
         return createdProtector;
     }
 
