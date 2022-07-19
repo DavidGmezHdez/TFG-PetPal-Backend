@@ -41,26 +41,61 @@ export default class ProtectorRepository {
         const foundedUser = await UserModel.findOne({
             email: protector.email
         });
-        if (foundedProtectorName)
+        if (foundedProtectorName) {
+            await s3Service.s3DeleteV2(protector.imageKey);
             throw new InternalError(
                 `Error: Ya existe una protectora con ese nombre`
             );
-        if (foundedUser)
+        }
+
+        if (foundedUser) {
+            await s3Service.s3DeleteV2(protector.imageKey);
             throw new InternalError(
                 `Error: Ya existe un usuario con ese nombre`
             );
+        }
+
         const foundedProtectorEmail = await ProtectorModel.findOne({
-            name: protector.email
+            email: protector.email
         });
-        if (foundedProtectorEmail)
+        if (foundedProtectorEmail) {
+            await s3Service.s3DeleteV2(protector.imageKey);
             throw new InternalError(
                 `Error: Ya existe una protectora con ese email`
             );
+        }
+
         const createdProtector = await ProtectorModel.create(protector);
         return createdProtector;
     }
 
     static async partialUpdate(protector) {
+        const foundedProtectorName = await ProtectorModel.findOne({
+            name: protector.name
+        });
+        const foundedUser = await UserModel.findOne({
+            email: protector.email
+        });
+        if (foundedProtectorName) {
+            throw new InternalError(
+                `Error: Ya existe una protectora con ese nombre`
+            );
+        }
+
+        if (foundedUser) {
+            throw new InternalError(
+                `Error: Ya existe un usuario con ese nombre`
+            );
+        }
+        const foundedProtectorEmail = await ProtectorModel.findOne({
+            email: protector.email
+        });
+        if (foundedProtectorEmail) {
+            throw new InternalError(
+                `Error: Ya existe una protectora con ese email`
+            );
+        }
+
         // Will need to update, then update pets region and later return
         await ProtectorModel.findByIdAndUpdate(
             { _id: protector.id },
@@ -97,9 +132,11 @@ export default class ProtectorRepository {
     }
 
     static async destroy(id: string) {
-        const foundedProtector = await ProtectorModel.findById(id);
+        const foundedProtector = await ProtectorModel.findById(id).lean();
         if (!foundedProtector)
             throw new NotFoundError(`Protector doesn't exist`);
+        if (foundedProtector.imageKey)
+            await s3Service.s3DeleteV2(foundedProtector.imageKey);
         const deletedProtector = await ProtectorModel.findByIdAndDelete(
             id
         ).lean();
@@ -110,8 +147,21 @@ export default class ProtectorRepository {
         const foundedProtector = await ProtectorModel.findById(id).lean();
         if (!foundedProtector)
             throw new NotFoundError(`Protector doesn't exist`);
+        // If the protector doesn't have an image we must upload it
         if (image) {
-            await s3Service.s3UpdateV2(image, foundedProtector.imageKey);
+            if (foundedProtector.imageKey) {
+                await s3Service.s3UpdateV2(foundedProtector.imageKey, image);
+            } else {
+                const s3Result = image
+                    ? await s3Service.s3UploadV2(image, "pets")
+                    : { Location: undefined, Key: undefined };
+                const protector = {
+                    image: s3Result.Location,
+                    imageKey: s3Result.Key
+                };
+
+                await ProtectorRepository.partialUpdate({ protector });
+            }
         }
         return foundedProtector;
     }
