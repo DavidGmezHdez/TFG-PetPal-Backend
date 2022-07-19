@@ -105,8 +105,7 @@ export default class ProtectorController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const image = req.file;
-
-            console.log(image);
+            
             const updatedProtector = await ProtectorRepository.updateImage(
                 id,
                 image

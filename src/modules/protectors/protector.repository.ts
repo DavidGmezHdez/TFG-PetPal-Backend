@@ -61,27 +61,24 @@ export default class ProtectorRepository {
     }
 
     static async partialUpdate(protector) {
-        console.log("PROTECTOR", protector);
-
-        // We must update the region of the pets the protector has
-
-        const foundedProtector = await ProtectorModel.findById(protector._id);
+        // Will need to update, then update pets region and later return
+        await ProtectorModel.findByIdAndUpdate(
+            { _id: protector.id },
+            { $set: protector },
+            { new: true }
+        );
         await PetModel.updateMany(
-            { _id: { $in: foundedProtector.pets } },
+            { _id: { $in: protector.pets } },
             { $set: { region: protector.region } },
             { multi: true }
         );
 
-        const updatedProtector = await ProtectorModel.findByIdAndUpdate(
-            { _id: protector.id },
-            { $set: protector },
-            { new: true }
-        )
+        const foundedProtector = await ProtectorModel.findById(protector.id)
             .lean()
             .populate("posts")
             .populate("pets");
-        console.log("UPDATED PROTECTOR", updatedProtector);
-        return updatedProtector;
+
+        return foundedProtector;
     }
 
     static async update(protector) {
@@ -113,10 +110,6 @@ export default class ProtectorRepository {
         const foundedProtector = await ProtectorModel.findById(id).lean();
         if (!foundedProtector)
             throw new NotFoundError(`Protector doesn't exist`);
-        if (!foundedProtector)
-            throw new NotFoundError(`Protector doesn't exist`);
-
-        console.log(foundedProtector.imageKey);
         if (image) {
             await s3Service.s3UpdateV2(image, foundedProtector.imageKey);
         }
