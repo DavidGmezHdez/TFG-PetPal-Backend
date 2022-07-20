@@ -60,7 +60,7 @@ export default class EventController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const event = req.body.event;
-            const updatedEvent = await EventRepository.update({
+            const updatedEvent = await EventRepository.partialUpdate({
                 id: id,
                 ...event
             });

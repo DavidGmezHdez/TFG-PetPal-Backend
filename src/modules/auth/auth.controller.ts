@@ -4,17 +4,22 @@ import { UserRepository } from "@modules/users";
 import bcrypt from "bcrypt";
 import { ProtectorRepository } from "@modules/protectors";
 import jwt from "jsonwebtoken";
+import { s3Service } from "@utils/s3Service";
 
 export default class AuthController {
     static async registerUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { name, email, password } = req.body;
+            const image = req.file;
             if (!email) throw new BadRequest("No email was provided");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
             await UserRepository.create({
-                name,
-                email,
-                password: encryptedPassword
+                user: {
+                    name,
+                    email,
+                    password: encryptedPassword
+                },
+                image
             });
 
             return res.status(201).json({
@@ -34,15 +39,19 @@ export default class AuthController {
         try {
             const { name, email, password, region, direction, contactPhone } =
                 req.body;
+            const image = req.file;
             if (!email) throw new BadRequest("No email was provided");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
             await ProtectorRepository.create({
-                name,
-                email,
-                password: encryptedPassword,
-                direction,
-                region,
-                contactPhone
+                protector: {
+                    name,
+                    email,
+                    password: encryptedPassword,
+                    direction,
+                    region,
+                    contactPhone
+                },
+                image
             });
             return res.status(201).json({
                 success: true,

@@ -79,7 +79,7 @@ export default class ProtectorController {
                 ...protector,
                 password: encryptedPassword
             };
-            const updatedProtector = await ProtectorRepository.update({
+            const updatedProtector = await ProtectorRepository.partialUpdate({
                 id: id,
                 ...finalProtector
             });
@@ -95,6 +95,22 @@ export default class ProtectorController {
             if (!id) throw new BadRequest("No id was provided");
             const deletedProtector = await ProtectorRepository.destroy(id);
             return res.status(204).json(deletedProtector);
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+    static async imageUpdate(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const image = req.file;
+            
+            const updatedProtector = await ProtectorRepository.updateImage(
+                id,
+                image
+            );
+            return res.status(200).json(updatedProtector);
         } catch (error) {
             return next(error);
         }

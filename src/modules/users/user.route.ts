@@ -3,6 +3,7 @@ import { validate } from "express-validation";
 import UserController from "./users.controller";
 import passport from "passport";
 import userValidation from "./user.validations";
+import { upload } from "@utils/multer";
 
 export const UserRouter = Router()
     .get(
@@ -36,6 +37,12 @@ export const UserRouter = Router()
         "/:id",
         passport.authenticate("jwt", { session: false }),
         UserController.partialUpdate
+    )
+    .post(
+        "/:id",
+        passport.authenticate("jwt", { session: false }),
+        upload.single("image"),
+        UserController.imageUpdate
     );
 
 export default UserRouter;

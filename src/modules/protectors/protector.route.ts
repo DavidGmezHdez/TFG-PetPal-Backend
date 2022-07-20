@@ -3,6 +3,7 @@ import { validate } from "express-validation";
 import ProtectorController from "./protector.controller";
 import passport from "passport";
 import protectorValidation from "./protector.validation";
+import { upload } from "@utils/multer";
 
 export const ProtectorRouter = Router()
     .get(
@@ -35,6 +36,12 @@ export const ProtectorRouter = Router()
         "/:id",
         passport.authenticate("jwt", { session: false }),
         ProtectorController.partialUpdate
+    )
+    .post(
+        "/:id",
+        passport.authenticate("jwt", { session: false }),
+        upload.single("image"),
+        ProtectorController.imageUpdate
     );
 
 export default ProtectorRouter;

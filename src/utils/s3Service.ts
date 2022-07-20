@@ -24,9 +24,9 @@ const s3UpdateV2 = async (key, file) => {
     const param = {
         Bucket: process.env.AWS_BUCKET_NAME || "aws-s3-pet-pal",
         Key: key,
-        Body: file
+        Body: file.buffer
     };
-    return s3.putObject(param).promise();
+    return await s3.putObject(param).promise();
 };
 export const s3Service = {
     s3UploadV2,
