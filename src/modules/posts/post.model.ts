@@ -9,6 +9,7 @@ const postSchema = new Schema(
         name: { type: String, required: true },
         likes: { type: Number },
         image: { type: String },
+        imageKey: { type: String },
         comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }]
     },
     { timestamps: true }

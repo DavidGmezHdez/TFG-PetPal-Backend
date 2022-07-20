@@ -2,6 +2,7 @@ import { CommentRepository } from "@modules/comments";
 import { ProtectorModel } from "@modules/protectors";
 import { UserModel } from "@modules/users";
 import { NotFoundError } from "@utils/errors";
+import { s3Service } from "@utils/s3Service";
 import PostModel from "./post.model";
 
 export default class PostRepository {
@@ -19,8 +20,16 @@ export default class PostRepository {
         return post;
     }
 
-    static async create(post) {
-        const createdPost = await PostModel.create(post);
+    static async create({ post, image }) {
+        const s3Result = image
+            ? await s3Service.s3UploadV2(image, "posts")
+            : { Location: undefined, Key: undefined };
+        const sendPet = {
+            ...post,
+            image: s3Result.Location,
+            imageKey: s3Result.Key
+        };
+        const createdPost = await PostModel.create(sendPet);
         return createdPost;
     }
 
@@ -59,6 +68,9 @@ export default class PostRepository {
             { likedPosts: { $elemMatch: { $eq: id } } },
             { $pull: { likedPosts: { $in: [id] } } }
         );
+
+        if (deletedPost.imageKey)
+            await s3Service.s3DeleteV2(deletedPost.imageKey);
         return deletedPost;
     }
 

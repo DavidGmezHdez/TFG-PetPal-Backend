@@ -1,6 +1,7 @@
 import { Router } from "express";
 import PostController from "./post.controller";
 import passport from "passport";
+import { upload } from "@utils/multer";
 
 export const PostRouter = Router()
     .get(
@@ -16,6 +17,7 @@ export const PostRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
+        upload.single("image"),
         PostController.create
     )
     .delete(
