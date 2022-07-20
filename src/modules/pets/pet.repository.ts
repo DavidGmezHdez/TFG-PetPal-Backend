@@ -15,7 +15,7 @@ export default class PetRepository {
         return pet;
     }
 
-    static async getByData(data: any) {
+    static async getByData(data) {
         const pets = await PetModel.find(data).lean().populate("protector");
         if (!pets) throw new NotFoundError(`No se encontraron mascotas `);
         return pets;
@@ -62,8 +62,9 @@ export default class PetRepository {
 
     static async destroy(id: string) {
         const deletedPet = await PetModel.findByIdAndDelete(id);
-        await s3Service.s3DeleteV2(deletedPet.imageKey);
         if (!deletedPet) return new NotFoundError(`Pet doesn't exist`);
+        if (deletedPet.imageKey)
+            await s3Service.s3DeleteV2(deletedPet.imageKey);
         return deletedPet;
     }
 }

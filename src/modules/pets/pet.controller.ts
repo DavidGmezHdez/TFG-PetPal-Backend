@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import PetRepository from "./pet.repository";
 import { BadRequest } from "@utils/errors";
-import { s3Service } from "@utils/s3Service";
 
 export default class PetController {
     static async getAll(req: Request, res: Response, next: NextFunction) {
