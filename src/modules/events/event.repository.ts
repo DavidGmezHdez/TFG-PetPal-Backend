@@ -35,8 +35,10 @@ export default class EventRepository {
         });
         if (foundEvent)
             throw new InternalError("Ya existe un evento con ese nombre");
+        console.log(event);
         const createdEvent = await EventModel.create(event);
-        const host = await UserModel.findOne(event.host._id).lean();
+        console.log("EVENT CREATED", createdEvent);
+        const host = await UserModel.findOne(createdEvent.host).lean();
         const formatedEvent = { ...createdEvent._doc, host: host };
         return formatedEvent;
     }
@@ -71,6 +73,11 @@ export default class EventRepository {
     static async destroy(id: string) {
         const deletedEvent = await EventModel.findByIdAndDelete(id);
         if (!deletedEvent) throw new NotFoundError(`No existe tal evento`);
+
+        await UserModel.findByIdAndUpdate(
+            { _id: deletedEvent.host },
+            { $pull: { hostEvents: { $in: [id] } } }
+        );
 
         await UserModel.updateMany(
             { attendingEvents: { $elemMatch: { $eq: id } } },

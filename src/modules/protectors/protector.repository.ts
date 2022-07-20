@@ -87,12 +87,13 @@ export default class ProtectorRepository {
         });
 
         const differentProtectorName =
-            foundedProtectorName && foundedProtectorName._id !== protector._id;
+            foundedProtectorName &&
+            foundedProtectorName._id.toString() !== protector._id;
         const differentUserEmail =
-            foundedUser && foundedUser._id !== protector._id;
+            foundedUser && foundedUser._id.toString() !== protector._id;
         const differentProtectorEmailEmail =
             foundedProtectorEmail &&
-            foundedProtectorEmail._id !== protector._id;
+            foundedProtectorEmail._id.toString() !== protector._id;
 
         if (differentProtectorName) {
             throw new InternalError(
@@ -172,11 +173,16 @@ export default class ProtectorRepository {
                     ? await s3Service.s3UploadV2(image, "pets")
                     : { Location: undefined, Key: undefined };
                 const protector = {
+                    id: id,
                     image: s3Result.Location,
                     imageKey: s3Result.Key
                 };
 
-                await ProtectorRepository.partialUpdate({ protector });
+                await ProtectorModel.findByIdAndUpdate(
+                    { _id: protector.id },
+                    { $set: protector },
+                    { new: true }
+                );
             }
         }
         return foundedProtector;

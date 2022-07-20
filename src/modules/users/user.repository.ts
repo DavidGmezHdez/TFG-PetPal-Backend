@@ -57,15 +57,16 @@ export default class UserRepository {
     static async partialUpdate(user) {
         const foundUser = await UserModel.findOne({
             email: user.email
-        });
+        }).lean();
         const foundProtector = await ProtectorModel.findOne({
             email: user.email
-        });
+        }).lean();
 
-        if (
-            (foundUser && foundUser._id !== user._id) ||
-            (foundProtector && foundProtector._id !== user._id)
-        )
+        const differentUser = foundUser && user.id !== foundUser._id.toString();
+        const differentProtector =
+            foundProtector && user.id !== foundProtector._id.toString();
+
+        if (differentUser || differentProtector)
             throw new InternalError("Ya existe un usuario con ese email");
 
         const updatedUser = await UserModel.findByIdAndUpdate(
@@ -110,14 +111,19 @@ export default class UserRepository {
                 await s3Service.s3UpdateV2(foundedUser.imageKey, image);
             } else {
                 const s3Result = image
-                    ? await s3Service.s3UploadV2(image, "pets")
+                    ? await s3Service.s3UploadV2(image, "users")
                     : { Location: undefined, Key: undefined };
                 const user = {
+                    id: id,
                     image: s3Result.Location,
                     imageKey: s3Result.Key
                 };
 
-                await UserRepository.partialUpdate({ user });
+                await UserModel.findByIdAndUpdate(
+                    { _id: user.id },
+                    { $set: user },
+                    { new: true }
+                );
             }
         }
         return foundedUser;
