@@ -61,13 +61,13 @@ export default class UserRepository {
         const foundProtector = await ProtectorModel.findOne({
             email: user.email
         });
+
         if (
             (foundUser && foundUser._id !== user._id) ||
             (foundProtector && foundProtector._id !== user._id)
         )
             throw new InternalError("Ya existe un usuario con ese email");
 
-        console.log(user);
         const updatedUser = await UserModel.findByIdAndUpdate(
             { _id: user.id },
             { $set: user },

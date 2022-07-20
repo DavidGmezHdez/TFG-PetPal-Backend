@@ -38,17 +38,19 @@ export default class ProtectorRepository {
         const foundedProtectorName = await ProtectorModel.findOne({
             name: protector.name
         });
-        const foundedUser = await UserModel.findOne({
-            email: protector.email
-        });
+
         if (foundedProtectorName)
             throw new InternalError(
                 `Error: Ya existe una protectora con ese nombre`
             );
 
+        const foundedUser = await UserModel.findOne({
+            email: protector.email
+        });
+
         if (foundedUser)
             throw new InternalError(
-                `Error: Ya existe un usuario con ese nombre`
+                `Error: Ya existe un usuario con ese email`
             );
 
         const foundedProtectorEmail = await ProtectorModel.findOne({
@@ -79,21 +81,32 @@ export default class ProtectorRepository {
         const foundedUser = await UserModel.findOne({
             email: protector.email
         });
-        if (foundedProtectorName) {
+
+        const foundedProtectorEmail = await ProtectorModel.findOne({
+            email: protector.email
+        });
+
+        const differentProtectorName =
+            foundedProtectorName && foundedProtectorName._id !== protector._id;
+        const differentUserEmail =
+            foundedUser && foundedUser._id !== protector._id;
+        const differentProtectorEmailEmail =
+            foundedProtectorEmail &&
+            foundedProtectorEmail._id !== protector._id;
+
+        if (differentProtectorName) {
             throw new InternalError(
                 `Error: Ya existe una protectora con ese nombre`
             );
         }
 
-        if (foundedUser) {
+        if (differentUserEmail) {
             throw new InternalError(
-                `Error: Ya existe un usuario con ese nombre`
+                `Error: Ya existe un usuario con ese email`
             );
         }
-        const foundedProtectorEmail = await ProtectorModel.findOne({
-            email: protector.email
-        });
-        if (foundedProtectorEmail) {
+
+        if (differentProtectorEmailEmail) {
             throw new InternalError(
                 `Error: Ya existe una protectora con ese email`
             );
