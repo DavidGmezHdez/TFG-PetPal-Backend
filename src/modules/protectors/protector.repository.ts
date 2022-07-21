@@ -1,4 +1,5 @@
-import { PetModel } from "@modules/pets";
+import { PetModel, PetRepository } from "@modules/pets";
+import { PostModel, PostRepository } from "@modules/posts";
 import { UserModel } from "@modules/users";
 import { InternalError, NotFoundError } from "@utils/errors";
 import { s3Service } from "@utils/s3Service";
@@ -149,14 +150,32 @@ export default class ProtectorRepository {
     }
 
     static async destroy(id: string) {
-        const foundedProtector = await ProtectorModel.findById(id).lean();
-        if (!foundedProtector)
-            throw new NotFoundError(`Protector doesn't exist`);
-        if (foundedProtector.imageKey)
-            await s3Service.s3DeleteV2(foundedProtector.imageKey);
         const deletedProtector = await ProtectorModel.findByIdAndDelete(
             id
         ).lean();
+        if (!deletedProtector)
+            throw new NotFoundError(`Protector doesn't exist`);
+
+        // DELETE protector's posts
+        for (const post of deletedProtector.posts) {
+            await PostRepository.destroy(post);
+        }
+
+        // DECREMENT posts likes
+        for (const likedPost of deletedProtector.likedPosts) {
+            await PostModel.findByIdAndUpdate(
+                { _id: likedPost },
+                { $inc: { likes: -1 } }
+            );
+        }
+
+        for (const pet of deletedProtector.pets) {
+            await PetRepository.destroy(pet);
+        }
+
+        if (deletedProtector.imageKey)
+            await s3Service.s3DeleteV2(deletedProtector.imageKey);
+
         return deletedProtector;
     }
 
