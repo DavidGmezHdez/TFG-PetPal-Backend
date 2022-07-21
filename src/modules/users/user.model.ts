@@ -14,7 +14,8 @@ const userSchema = new Schema({
     hostEvents: [{ type: Schema.Types.ObjectId, ref: "Event", default: null }],
     attendingEvents: [
         { type: Schema.Types.ObjectId, ref: "Event", default: null }
-    ]
+    ],
+    rol: { type: String }
 });
 
 const UserModel = mongoose.model("User", userSchema);

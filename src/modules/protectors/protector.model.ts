@@ -13,7 +13,9 @@ const protectorsSchema = new Schema({
     pets: [{ type: Schema.Types.ObjectId, ref: "Pet", default: null }],
     region: { type: String, required: true },
     direction: { type: String, required: true },
-    contactPhone: { type: String, unique: true, required: true }
+    contactPhone: { type: String, unique: true, required: true },
+    rol: { type: String },
+    status: { type: String }
 });
 
 const ProtectorModel = mongoose.model("Protector", protectorsSchema);

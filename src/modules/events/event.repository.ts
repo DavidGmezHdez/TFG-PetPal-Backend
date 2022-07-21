@@ -9,6 +9,7 @@ export default class EventRepository {
         })
             .lean()
             .sort({ date: -1 });
+        console.log("GET ALL EVENTS", events);
         if (!events.length) throw new NotFoundError(`No events available`);
         const finalEvents = this.fetchUserDataEvents(events);
         return finalEvents;

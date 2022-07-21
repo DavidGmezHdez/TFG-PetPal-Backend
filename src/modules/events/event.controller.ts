@@ -9,6 +9,7 @@ export default class EventController {
             const events = title
                 ? await EventRepository.getByTitle(title)
                 : await EventRepository.getAll();
+            console.log("EVENTS", events);
             return res.status(200).json(events);
         } catch (error) {
             return next(error);

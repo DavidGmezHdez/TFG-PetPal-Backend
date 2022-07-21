@@ -62,6 +62,14 @@ export default class ProtectorRepository {
                 `Error: Ya existe una protectora con ese email`
             );
 
+        const foundedProtectorPhone = await ProtectorModel.findOne({
+            contactPhone: protector.contactPhone
+        });
+        if (foundedProtectorPhone)
+            throw new InternalError(
+                `Error: Ya existe una protectora con ese número de teléfono`
+            );
+
         const s3Result = image
             ? await s3Service.s3UploadV2(image, "protectors")
             : { Location: undefined, Key: undefined };
@@ -86,6 +94,9 @@ export default class ProtectorRepository {
         const foundedProtectorEmail = await ProtectorModel.findOne({
             email: protector.email
         });
+        const foundedProtectorContactPhone = await ProtectorModel.findOne({
+            contactPhone: protector.contactPhone
+        });
 
         const differentProtectorName =
             foundedProtectorName &&
@@ -95,6 +106,9 @@ export default class ProtectorRepository {
         const differentProtectorEmailEmail =
             foundedProtectorEmail &&
             foundedProtectorEmail._id.toString() !== protector._id;
+        const differentProtectorContactPhone =
+            foundedProtectorContactPhone &&
+            foundedProtectorContactPhone._id.toString() !== protector._id;
 
         if (differentProtectorName) {
             throw new InternalError(
@@ -109,6 +123,12 @@ export default class ProtectorRepository {
         }
 
         if (differentProtectorEmailEmail) {
+            throw new InternalError(
+                `Error: Ya existe una protectora con ese email`
+            );
+        }
+
+        if (differentProtectorContactPhone) {
             throw new InternalError(
                 `Error: Ya existe una protectora con ese email`
             );
