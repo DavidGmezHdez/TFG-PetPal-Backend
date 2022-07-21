@@ -1,3 +1,5 @@
+import { EventModel, EventRepository } from "@modules/events";
+import { PostModel, PostRepository } from "@modules/posts";
 import { ProtectorModel } from "@modules/protectors";
 import { InternalError, NotFoundError } from "@utils/errors";
 import { s3Service } from "@utils/s3Service";
@@ -97,6 +99,31 @@ export default class UserRepository {
     static async destroy(id: string) {
         const deletedUser = await UserModel.findByIdAndDelete(id).lean();
         if (!deletedUser) throw new NotFoundError(`User doesn't exist`);
+
+        // DELETE user's posts
+        for (const post of deletedUser.posts) {
+            await PostRepository.destroy(post);
+        }
+
+        // DELETE user's host events
+        for (const event of deletedUser.hostEvents) {
+            await EventRepository.destroy(event);
+        }
+
+        // DELETE event's attendants
+        await EventModel.updateMany(
+            { attendants: { $elemMatch: { $eq: id } } },
+            { $pull: { attendants: { $in: [id] } } }
+        );
+
+        // DECREMENT posts likes
+        for (const likedPost of deletedUser.likedPosts) {
+            await PostModel.findByIdAndUpdate(
+                { _id: likedPost },
+                { $inc: { likes: -1 } }
+            );
+        }
+
         if (deletedUser.imageKey)
             await s3Service.s3DeleteV2(deletedUser.imageKey);
         return deletedUser;
