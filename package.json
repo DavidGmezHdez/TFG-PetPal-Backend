@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.ts",
     "scripts": {
-        "start": "ts-node -r tsconfig-paths/register index.ts",
-        "dev": "set NODE_ENV=dev&&ts-node -r tsconfig-paths/register index.ts",
+        "start": "ts-node -r tsconfig-paths/register --max_old_space_size=2560 index.ts",
+        "dev": "set NODE_ENV=dev&&ts-node -r --max_old_space_size=2560 tsconfig-paths/register index.ts",
         "local": "set NODE_ENV=local&&ts-node -r tsconfig-paths/register index.ts",
         "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
         "lint": "npx eslint .",
