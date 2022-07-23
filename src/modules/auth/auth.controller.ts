@@ -124,7 +124,7 @@ export default class AuthController {
             }
 
             const token = jwt.sign({ email: email }, process.env.JWT_SECRET);
-            const user = { ...foundedUser, token: token };
+            const user = { ...foundedUser, rol: foundedUser.rol, token: token };
             return res.status(200).json({
                 success: true,
                 msg: "login successful",
@@ -155,6 +155,7 @@ export default class AuthController {
             const token = jwt.sign({ email: email }, process.env.JWT_SECRET);
             const user = {
                 ...foundedProtector,
+                rol: foundedProtector.rol,
                 token: token
             };
             return res.status(200).json({

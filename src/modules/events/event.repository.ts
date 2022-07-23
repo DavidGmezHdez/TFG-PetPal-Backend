@@ -8,11 +8,10 @@ export default class EventRepository {
             date: { $gt: Date.now() }
         })
             .lean()
-            .sort({ date: -1 });
-        console.log("GET ALL EVENTS", events);
+            .sort({ date: -1 })
+            .populate("host");
         if (!events.length) throw new NotFoundError(`No events available`);
-        const finalEvents = this.fetchUserDataEvents(events);
-        return finalEvents;
+        return events;
     }
 
     static async get(id: string) {
@@ -36,10 +35,8 @@ export default class EventRepository {
         });
         if (foundEvent)
             throw new InternalError("Ya existe un evento con ese nombre");
-        console.log(event);
         const createdEvent = await EventModel.create(event);
-        console.log("EVENT CREATED", createdEvent);
-        const host = await UserModel.findOne(createdEvent.host).lean();
+        const host = await UserModel.findById(createdEvent.host).lean();
         const formatedEvent = { ...createdEvent._doc, host: host };
         return formatedEvent;
     }
@@ -85,39 +82,5 @@ export default class EventRepository {
             { $pull: { attendingEvents: { $in: [id] } } }
         );
         return deletedEvent;
-    }
-
-    static async fetchUserDataEvents(events) {
-        const finalEvents: any[] = [];
-        for (const event of events) {
-            const host = await UserModel.findOne(event.host._id).lean();
-            const attendants = [];
-            for (const atten of event.attendants) {
-                attendants.push(await UserModel.findOne(atten._id).lean());
-            }
-            const updatedEvent = {
-                ...event,
-                host: host,
-                attendants: attendants
-            };
-            finalEvents.push(updatedEvent);
-        }
-
-        return finalEvents;
-    }
-
-    static async fetchUserDataEvent(event) {
-        const host = await UserModel.findOne(event.host._id).lean();
-        const attendants = [];
-        for (const atten of event.attendants) {
-            attendants.push(await UserModel.findOne(atten._id).lean());
-        }
-        const updatedEvent = {
-            ...event,
-            host: host,
-            attendants: attendants
-        };
-
-        return updatedEvent;
     }
 }
