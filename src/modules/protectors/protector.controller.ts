@@ -2,6 +2,7 @@ import { BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import ProtectorRepository from "./protector.repository";
 import bcrypt from "bcrypt";
+import { transporter } from "@utils/transporter";
 
 export default class ProtectorController {
     static async getAll(req, res, next) {
@@ -79,10 +80,21 @@ export default class ProtectorController {
                 ...protector,
                 password: encryptedPassword
             };
+
             const updatedProtector = await ProtectorRepository.partialUpdate({
                 id: id,
                 ...finalProtector
             });
+
+            if (finalProtector.promoted) {
+                console.log("ENTER PROMOTED");
+                await transporter.sendMail({
+                    from: process.env.MAIL_FROM,
+                    to: updatedProtector.email,
+                    subject: "Su protectora ha sido aceptada",
+                    text: "Su petición de registro como protectora ha sido aceptada. Puede acceder con su cuenta. Atentamente el equipo de PetPal"
+                });
+            }
             return res.json(updatedProtector);
         } catch (error) {
             return next(error);
@@ -94,6 +106,7 @@ export default class ProtectorController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const deletedProtector = await ProtectorRepository.destroy(id);
+            console.log(deletedProtector);
             return res.status(204).json(deletedProtector);
         } catch (error) {
             return next(error);
@@ -105,7 +118,7 @@ export default class ProtectorController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const image = req.file;
-            
+
             const updatedProtector = await ProtectorRepository.updateImage(
                 id,
                 image

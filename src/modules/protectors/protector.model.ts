@@ -15,7 +15,7 @@ const protectorsSchema = new Schema({
     direction: { type: String, required: true },
     contactPhone: { type: String, unique: true, required: true },
     rol: { type: String },
-    status: { type: String }
+    promoted: { type: Boolean, default: false }
 });
 
 const ProtectorModel = mongoose.model("Protector", protectorsSchema);
