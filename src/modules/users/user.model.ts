@@ -7,13 +7,15 @@ const userSchema = new Schema({
     name: { type: String, required: true },
     password: { type: String, required: true },
     image: { type: String },
+    imageKey: { type: String },
     posts: [{ type: Schema.Types.ObjectId, ref: "Post", default: null }],
     likedPosts: [{ type: Schema.Types.ObjectId, ref: "Post", default: null }],
     pets: [{ type: Schema.Types.ObjectId, ref: "Pet", default: null }],
     hostEvents: [{ type: Schema.Types.ObjectId, ref: "Event", default: null }],
     attendingEvents: [
         { type: Schema.Types.ObjectId, ref: "Event", default: null }
-    ]
+    ],
+    rol: { type: String }
 });
 
 const UserModel = mongoose.model("User", userSchema);

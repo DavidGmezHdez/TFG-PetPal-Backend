@@ -1,6 +1,7 @@
 import { s3Service } from "@utils/s3Service";
 import PetModel from "./pet.model";
 import { NotFoundError, InternalError } from "@utils/errors";
+import { UserModel } from "@modules/users";
 
 export default class PetRepository {
     static async getAll() {
@@ -63,6 +64,12 @@ export default class PetRepository {
     static async destroy(id: string) {
         const deletedPet = await PetModel.findByIdAndDelete(id);
         if (!deletedPet) return new NotFoundError(`Pet doesn't exist`);
+
+        await UserModel.findByIdAndUpdate(
+            { _id: deletedPet.protector },
+            { $pull: { pets: { $in: [id] } } }
+        );
+
         if (deletedPet.imageKey)
             await s3Service.s3DeleteV2(deletedPet.imageKey);
         return deletedPet;

@@ -1,4 +1,5 @@
-import { PetModel } from "@modules/pets";
+import { PetModel, PetRepository } from "@modules/pets";
+import { PostModel, PostRepository } from "@modules/posts";
 import { UserModel } from "@modules/users";
 import { InternalError, NotFoundError } from "@utils/errors";
 import { s3Service } from "@utils/s3Service";
@@ -61,6 +62,14 @@ export default class ProtectorRepository {
                 `Error: Ya existe una protectora con ese email`
             );
 
+        const foundedProtectorPhone = await ProtectorModel.findOne({
+            contactPhone: protector.contactPhone
+        });
+        if (foundedProtectorPhone)
+            throw new InternalError(
+                `Error: Ya existe una protectora con ese número de teléfono`
+            );
+
         const s3Result = image
             ? await s3Service.s3UploadV2(image, "protectors")
             : { Location: undefined, Key: undefined };
@@ -85,14 +94,21 @@ export default class ProtectorRepository {
         const foundedProtectorEmail = await ProtectorModel.findOne({
             email: protector.email
         });
+        const foundedProtectorContactPhone = await ProtectorModel.findOne({
+            contactPhone: protector.contactPhone
+        });
 
         const differentProtectorName =
-            foundedProtectorName && foundedProtectorName._id !== protector._id;
+            foundedProtectorName &&
+            foundedProtectorName._id.toString() !== protector._id;
         const differentUserEmail =
-            foundedUser && foundedUser._id !== protector._id;
+            foundedUser && foundedUser._id.toString() !== protector._id;
         const differentProtectorEmailEmail =
             foundedProtectorEmail &&
-            foundedProtectorEmail._id !== protector._id;
+            foundedProtectorEmail._id.toString() !== protector._id;
+        const differentProtectorContactPhone =
+            foundedProtectorContactPhone &&
+            foundedProtectorContactPhone._id.toString() !== protector._id;
 
         if (differentProtectorName) {
             throw new InternalError(
@@ -107,6 +123,12 @@ export default class ProtectorRepository {
         }
 
         if (differentProtectorEmailEmail) {
+            throw new InternalError(
+                `Error: Ya existe una protectora con ese email`
+            );
+        }
+
+        if (differentProtectorContactPhone) {
             throw new InternalError(
                 `Error: Ya existe una protectora con ese email`
             );
@@ -148,14 +170,32 @@ export default class ProtectorRepository {
     }
 
     static async destroy(id: string) {
-        const foundedProtector = await ProtectorModel.findById(id).lean();
-        if (!foundedProtector)
-            throw new NotFoundError(`Protector doesn't exist`);
-        if (foundedProtector.imageKey)
-            await s3Service.s3DeleteV2(foundedProtector.imageKey);
         const deletedProtector = await ProtectorModel.findByIdAndDelete(
             id
         ).lean();
+        if (!deletedProtector)
+            throw new NotFoundError(`Protector doesn't exist`);
+
+        // DELETE protector's posts
+        for (const post of deletedProtector.posts) {
+            await PostRepository.destroy(post);
+        }
+
+        // DECREMENT posts likes
+        for (const likedPost of deletedProtector.likedPosts) {
+            await PostModel.findByIdAndUpdate(
+                { _id: likedPost },
+                { $inc: { likes: -1 } }
+            );
+        }
+
+        for (const pet of deletedProtector.pets) {
+            await PetRepository.destroy(pet);
+        }
+
+        if (deletedProtector.imageKey)
+            await s3Service.s3DeleteV2(deletedProtector.imageKey);
+
         return deletedProtector;
     }
 
@@ -172,11 +212,16 @@ export default class ProtectorRepository {
                     ? await s3Service.s3UploadV2(image, "pets")
                     : { Location: undefined, Key: undefined };
                 const protector = {
+                    id: id,
                     image: s3Result.Location,
                     imageKey: s3Result.Key
                 };
 
-                await ProtectorRepository.partialUpdate({ protector });
+                await ProtectorModel.findByIdAndUpdate(
+                    { _id: protector.id },
+                    { $set: protector },
+                    { new: true }
+                );
             }
         }
         return foundedProtector;

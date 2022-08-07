@@ -4,12 +4,11 @@ import { UserRepository } from "@modules/users";
 import bcrypt from "bcrypt";
 import { ProtectorRepository } from "@modules/protectors";
 import jwt from "jsonwebtoken";
-import { s3Service } from "@utils/s3Service";
 
 export default class AuthController {
     static async registerUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password, rol } = req.body;
             const image = req.file;
             if (!email) throw new BadRequest("No email was provided");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
@@ -17,7 +16,8 @@ export default class AuthController {
                 user: {
                     name,
                     email,
-                    password: encryptedPassword
+                    password: encryptedPassword,
+                    rol
                 },
                 image
             });
@@ -37,8 +37,15 @@ export default class AuthController {
         next: NextFunction
     ) {
         try {
-            const { name, email, password, region, direction, contactPhone } =
-                req.body;
+            const {
+                name,
+                email,
+                password,
+                region,
+                direction,
+                contactPhone,
+                rol
+            } = req.body;
             const image = req.file;
             if (!email) throw new BadRequest("No email was provided");
             const encryptedPassword: string = bcrypt.hashSync(password, 10);
@@ -49,7 +56,8 @@ export default class AuthController {
                     password: encryptedPassword,
                     direction,
                     region,
-                    contactPhone
+                    contactPhone,
+                    rol
                 },
                 image
             });
@@ -116,7 +124,7 @@ export default class AuthController {
             }
 
             const token = jwt.sign({ email: email }, process.env.JWT_SECRET);
-            const user = { ...foundedUser, rol: "Usuario", token: token };
+            const user = { ...foundedUser, rol: foundedUser.rol, token: token };
             return res.status(200).json({
                 success: true,
                 msg: "login successful",
@@ -147,7 +155,7 @@ export default class AuthController {
             const token = jwt.sign({ email: email }, process.env.JWT_SECRET);
             const user = {
                 ...foundedProtector,
-                rol: "Protectora",
+                rol: foundedProtector.rol,
                 token: token
             };
             return res.status(200).json({

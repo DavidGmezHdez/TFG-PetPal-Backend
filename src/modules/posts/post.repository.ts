@@ -60,6 +60,12 @@ export default class PostRepository {
         for (const comment of deletedPost.comments) {
             await CommentRepository.destroy(comment._id);
         }
+
+        await UserModel.findByIdAndUpdate(
+            { _id: deletedPost.author },
+            { $pull: { posts: { $in: [id] } } }
+        );
+
         await UserModel.updateMany(
             { likedPosts: { $elemMatch: { $eq: id } } },
             { $pull: { likedPosts: { $in: [id] } } }
