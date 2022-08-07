@@ -17,7 +17,7 @@ export const PetRouter = Router()
     .post(
         "/",
         passport.authenticate("jwt", { session: false }),
-        upload.single("image"),
+        upload.array("images"),
         PetController.create
     )
     .delete(

@@ -35,7 +35,7 @@ export default class PetController {
         try {
             const createdPet = await PetRepository.create({
                 pet: req.body,
-                image: req.file
+                images: req.files
             });
             return res.status(201).json(createdPet);
         } catch (error) {
