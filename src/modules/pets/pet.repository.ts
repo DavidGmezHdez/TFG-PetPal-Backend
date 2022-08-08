@@ -22,20 +22,29 @@ export default class PetRepository {
         return pets;
     }
 
-    static async create({ pet, image }) {
+    static async create({ pet, images }) {
         const foundedPet = await PetModel.findOne({ name: pet.name });
         if (foundedPet)
             return new InternalError(
                 `Error while creating pet: Pet with that name already exists`
             );
 
-        const s3Result = image
-            ? await s3Service.s3UploadV2(image, "pets")
-            : { Location: undefined, Key: undefined };
+        const s3Result = await s3Service.s3UploadMultipleFilesV2(
+            images,
+            "pets"
+        );
+
+        const locations =
+            s3Result && s3Result.length
+                ? s3Result.map((img) => img.Location)
+                : [];
+        const keys =
+            s3Result && s3Result.length ? s3Result.map((img) => img.Key) : [];
+
         const sendPet = {
             ...pet,
-            image: s3Result.Location,
-            imageKey: s3Result.Key
+            image: locations,
+            imageKey: keys
         };
         const createdPet = await PetModel.create(sendPet);
         return createdPet;
@@ -70,8 +79,8 @@ export default class PetRepository {
             { $pull: { pets: { $in: [id] } } }
         );
 
-        if (deletedPet.imageKey)
-            await s3Service.s3DeleteV2(deletedPet.imageKey);
+        if (deletedPet.imageKey && deletedPet.imageKey.length)
+            await s3Service.s3DeleteMultipleFilesV2(deletedPet.imageKey);
         return deletedPet;
     }
 }

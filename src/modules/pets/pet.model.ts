@@ -11,8 +11,8 @@ const petSchema = new Schema({
     race: { type: String },
     color: { type: String },
     size: { type: String },
-    image: { type: String },
-    imageKey: { type: String },
+    image: { type: Array },
+    imageKey: { type: Array },
     region: { type: String },
     owner: { type: Schema.Types.ObjectId, ref: "User", default: null },
     protector: { type: Schema.Types.ObjectId, ref: "Protector" }
