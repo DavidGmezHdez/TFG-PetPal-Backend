@@ -32,16 +32,16 @@ const s3DeleteV2 = async (key) => {
     return s3.deleteObject(param).promise();
 };
 
-const s3DeleteMultipleFilesV2 = async (keys) => {
-    const params = keys.map((key) => {
-        return {
+const s3DeleteMultipleFilesV2 = async (keys: string[]) => {
+    const keysToDelete = keys.map((key) => ({ Key: key }));
+    return await s3
+        .deleteObjects({
             Bucket: process.env.AWS_BUCKET_NAME || "aws-s3-pet-pal",
-            Key: key
-        };
-    });
-    return await Promise.all(
-        params.map((param) => s3.deleteObject(param).promise())
-    );
+            Delete: {
+                Objects: keysToDelete
+            }
+        })
+        .promise();
 };
 
 const s3UpdateV2 = async (key, file) => {
