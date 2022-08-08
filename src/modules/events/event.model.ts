@@ -10,7 +10,8 @@ const eventSchema = new Schema({
     place: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
-    image: { type: String }
+    image: { type: String },
+    region: { type: String }
 });
 
 const EventModel = mongoose.model("Event", eventSchema);

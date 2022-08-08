@@ -20,13 +20,24 @@ export default class EventRepository {
         return event;
     }
 
-    static async getByTitle(title: string) {
-        const event = await EventModel.find({
-            title: { $regex: title },
-            date: { $gt: Date.now() }
-        });
-        if (!event) throw new NotFoundError(`No event available`);
-        return event;
+    static async getByData(data) {
+        console.log(data);
+        const filterOptions = data.title.length
+            ? {
+                  ...data,
+                  title: {
+                      $regex: data.title,
+                      $options: "i"
+                  }
+              }
+            : { ...data, title: undefined };
+        console.log(filterOptions);
+        const events = await EventModel.find()
+            .lean()
+            .sort({ date: -1 })
+            .populate("host");
+        if (!events) throw new NotFoundError(`No events available`);
+        return events;
     }
 
     static async create(event) {
