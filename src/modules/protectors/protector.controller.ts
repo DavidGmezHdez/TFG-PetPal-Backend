@@ -2,7 +2,7 @@ import { BadRequest } from "@utils/errors";
 import { NextFunction, Request, Response } from "express";
 import ProtectorRepository from "./protector.repository";
 import bcrypt from "bcrypt";
-import { transporter } from "@utils/transporter";
+import * as nodemailer from "nodemailer";
 
 export default class ProtectorController {
     static async getAll(req, res, next) {
@@ -87,7 +87,13 @@ export default class ProtectorController {
             });
 
             if (finalProtector.promoted) {
-                console.log("ENTER PROMOTED");
+                const transporter = nodemailer.createTransport({
+                    service: "gmail",
+                    auth: {
+                        user: process.env.MAIL_FROM,
+                        pass: process.env.MAIL_PASSWORD
+                    }
+                });
                 await transporter.sendMail({
                     from: process.env.MAIL_FROM,
                     to: updatedProtector.email,
