@@ -5,11 +5,10 @@ import EventRepository from "./event.repository";
 export default class EventController {
     static async getAll(req, res, next) {
         try {
-            const title = req.query.title as string;
-            const events = title
-                ? await EventRepository.getByTitle(title)
+            const data = { ...req.query, date: { $gt: Date.now() } };
+            const events = req.query
+                ? await EventRepository.getByData(data)
                 : await EventRepository.getAll();
-            console.log("EVENTS", events);
             return res.status(200).json(events);
         } catch (error) {
             return next(error);
@@ -76,6 +75,25 @@ export default class EventController {
             const { id } = req.params;
             if (!id) throw new BadRequest("No id was provided");
             const deletedEvent = await EventRepository.destroy(id);
+            return res.status(200).json(deletedEvent);
+        } catch (error) {
+            return next(error);
+        }
+    }
+
+    static async destroyEventReason(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
+        try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const { reason } = req.body;
+            const deletedEvent = await EventRepository.destroyEventReason(
+                id,
+                reason
+            );
             return res.status(200).json(deletedEvent);
         } catch (error) {
             return next(error);
