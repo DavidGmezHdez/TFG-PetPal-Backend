@@ -5,12 +5,10 @@ import EventRepository from "./event.repository";
 export default class EventController {
     static async getAll(req, res, next) {
         try {
-            console.log(req.query);
             const data = { ...req.query, date: { $gt: Date.now() } };
             const events = req.query
                 ? await EventRepository.getByData(data)
                 : await EventRepository.getAll();
-            console.log("EVENTS", events);
             return res.status(200).json(events);
         } catch (error) {
             return next(error);
