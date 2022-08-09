@@ -118,7 +118,7 @@ export default class EventRepository {
                 from: process.env.MAIL_FROM,
                 to: attendantsEmail,
                 subject: `El evento ${deletedEvent.title} ha sido borrado`,
-                text: `El usuario ${deletedEvent.host.name} ha cancelado el evento que estabas apuntado/a por: Usuario host eliminado`
+                text: `El usuario ${deletedEvent.host.name} ha cancelado el evento que estabas apuntado/a por: Administrador`
             });
         }
 
