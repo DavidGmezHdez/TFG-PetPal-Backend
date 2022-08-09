@@ -1,8 +1,6 @@
 import { Router } from "express";
-import { validate } from "express-validation";
 import EventController from "./event.controller";
 import passport from "passport";
-import eventValidation from "./event.validation";
 
 export const EventRouter = Router()
     .get(
@@ -34,6 +32,11 @@ export const EventRouter = Router()
         "/:id",
         passport.authenticate("jwt", { session: false }),
         EventController.partialUpdate
+    )
+    .put(
+        "/delete/:id",
+        passport.authenticate("jwt", { session: false }),
+        EventController.destroyEventReason
     );
 
 export default EventRouter;

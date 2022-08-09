@@ -82,4 +82,23 @@ export default class EventController {
             return next(error);
         }
     }
+
+    static async destroyEventReason(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
+        try {
+            const { id } = req.params;
+            if (!id) throw new BadRequest("No id was provided");
+            const { reason } = req.body;
+            const deletedEvent = await EventRepository.destroyEventReason(
+                id,
+                reason
+            );
+            return res.status(200).json(deletedEvent);
+        } catch (error) {
+            return next(error);
+        }
+    }
 }

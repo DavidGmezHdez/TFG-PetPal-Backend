@@ -118,7 +118,45 @@ export default class EventRepository {
                 from: process.env.MAIL_FROM,
                 to: attendantsEmail,
                 subject: `El evento ${deletedEvent.title} ha sido borrado`,
-                text: `El usuario ${deletedEvent.host.name} ha cancelado el evento que estabas apuntado/a por: patata`
+                text: `El usuario ${deletedEvent.host.name} ha cancelado el evento que estabas apuntado/a por: Usuario host eliminado`
+            });
+        }
+
+        return deletedEvent;
+    }
+
+    static async destroyEventReason(id: string, reason: string) {
+        const deletedEvent = await EventModel.findByIdAndDelete(id)
+            .populate("host")
+            .populate("attendants");
+        if (!deletedEvent) throw new NotFoundError(`No existe tal evento`);
+
+        await UserModel.findByIdAndUpdate(
+            { _id: deletedEvent.host._id },
+            { $pull: { hostEvents: { $in: [id] } } }
+        );
+
+        await UserModel.updateMany(
+            { attendingEvents: { $elemMatch: { $eq: id } } },
+            { $pull: { attendingEvents: { $in: [id] } } }
+        );
+
+        if (deletedEvent.attendants && deletedEvent.attendants.length) {
+            const attendantsEmail = deletedEvent.attendants.map(
+                (attendant) => attendant.email
+            );
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.MAIL_FROM,
+                    pass: process.env.MAIL_PASSWORD
+                }
+            });
+            await transporter.sendMail({
+                from: process.env.MAIL_FROM,
+                to: attendantsEmail,
+                subject: `El evento ${deletedEvent.title} ha sido borrado`,
+                text: `El usuario ${deletedEvent.host.name} ha cancelado el evento que estabas apuntado/a por: ${reason}`
             });
         }
 
