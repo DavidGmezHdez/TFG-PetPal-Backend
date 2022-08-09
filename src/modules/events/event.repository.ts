@@ -21,18 +21,23 @@ export default class EventRepository {
     }
 
     static async getByData(data) {
-        console.log(data);
-        const filterOptions = data.title.length
-            ? {
-                  ...data,
-                  title: {
-                      $regex: data.title,
-                      $options: "i"
+        const title = data.title;
+        const region = data.region;
+        const filterOptionsTitle =
+            title && title.length
+                ? {
+                      ...data,
+                      title: { $regex: title }
                   }
-              }
-            : { ...data, title: undefined };
-        console.log(filterOptions);
-        const events = await EventModel.find()
+                : { ...data };
+        const filterOptionsFinal =
+            region && region.length
+                ? {
+                      ...filterOptionsTitle,
+                      region: region
+                  }
+                : { ...filterOptionsTitle };
+        const events = await EventModel.find(filterOptionsFinal)
             .lean()
             .sort({ date: -1 })
             .populate("host");
