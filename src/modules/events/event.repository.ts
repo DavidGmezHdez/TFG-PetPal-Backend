@@ -1,5 +1,6 @@
 import { UserModel } from "@modules/users";
 import { InternalError, NotFoundError } from "@utils/errors";
+import * as nodemailer from "nodemailer";
 import EventModel from "./event.model";
 
 export default class EventRepository {
@@ -9,7 +10,8 @@ export default class EventRepository {
         })
             .lean()
             .sort({ date: -1 })
-            .populate("host");
+            .populate("host")
+            .populate("attendants");
         if (!events.length) throw new NotFoundError(`No events available`);
         return events;
     }
@@ -40,7 +42,8 @@ export default class EventRepository {
         const events = await EventModel.find(filterOptionsFinal)
             .lean()
             .sort({ date: -1 })
-            .populate("host");
+            .populate("host")
+            .populate("attendants");
         if (!events) throw new NotFoundError(`No events available`);
         return events;
     }
@@ -85,11 +88,13 @@ export default class EventRepository {
     }
 
     static async destroy(id: string) {
-        const deletedEvent = await EventModel.findByIdAndDelete(id);
+        const deletedEvent = await EventModel.findByIdAndDelete(id)
+            .populate("host")
+            .populate("attendants");
         if (!deletedEvent) throw new NotFoundError(`No existe tal evento`);
 
         await UserModel.findByIdAndUpdate(
-            { _id: deletedEvent.host },
+            { _id: deletedEvent.host._id },
             { $pull: { hostEvents: { $in: [id] } } }
         );
 
@@ -97,6 +102,26 @@ export default class EventRepository {
             { attendingEvents: { $elemMatch: { $eq: id } } },
             { $pull: { attendingEvents: { $in: [id] } } }
         );
+
+        if (deletedEvent.attendants && deletedEvent.attendants.length) {
+            const attendantsEmail = deletedEvent.attendants.map(
+                (attendant) => attendant.email
+            );
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.MAIL_FROM,
+                    pass: process.env.MAIL_PASSWORD
+                }
+            });
+            await transporter.sendMail({
+                from: process.env.MAIL_FROM,
+                to: attendantsEmail,
+                subject: `El evento ${deletedEvent.title} ha sido borrado`,
+                text: `El usuario ${deletedEvent.host.name} ha cancelado el evento que estabas apuntado/a por: patata`
+            });
+        }
+
         return deletedEvent;
     }
 }
