@@ -8,8 +8,10 @@ import PostModel from "./post.model";
 export default class PostRepository {
     static async getAll() {
         const posts = await PostModel.find()
-            .sort({ createdAt: -1 })
-            .populate("comments");
+            .populate("author")
+            .populate("comments")
+            .sort({ createdAt: -1 });
+
         if (!posts.length) throw new NotFoundError(`No hay posts disponibles`);
         return posts;
     }
