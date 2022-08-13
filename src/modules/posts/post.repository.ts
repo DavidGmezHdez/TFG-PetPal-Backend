@@ -26,15 +26,18 @@ export default class PostRepository {
         const s3Result = image
             ? await s3Service.s3UploadV2(image, "posts")
             : { Location: undefined, Key: undefined };
-        const sendPet = {
+        console.log(s3Result);
+        const sendPost = {
             ...post,
             image: s3Result.Location,
             imageKey: s3Result.Key
         };
-        const createdPost = await PostModel.create(sendPet);
+        console.log(s3Result);
+        const createdPost = await PostModel.create(sendPost);
         const finalPost = await PostModel.findById(createdPost)
             .populate("author")
             .populate("comments");
+        console.log(finalPost);
         return finalPost;
     }
 
