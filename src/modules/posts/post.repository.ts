@@ -30,7 +30,10 @@ export default class PostRepository {
             imageKey: s3Result.Key
         };
         const createdPost = await PostModel.create(sendPet);
-        return createdPost;
+        const finalPost = await PostModel.findById(createdPost)
+            .populate("author")
+            .populate("comments");
+        return finalPost;
     }
 
     static async partialUpdate(post) {
