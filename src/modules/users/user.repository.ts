@@ -10,7 +10,8 @@ export default class UserRepository {
         const users = await UserModel.find()
             .lean()
             .populate("posts")
-            .populate("hostEvents");
+            .populate("hostEvents")
+            .populate("attendingEvents");
         if (!users.length) throw new NotFoundError(`No users available`);
         return users;
     }
@@ -19,7 +20,9 @@ export default class UserRepository {
         const user = await UserModel.findById(id)
             .lean()
             .populate("posts")
-            .populate("hostEvents");
+            .populate("hostEvents")
+            .populate("attendingEvents");
+
         if (!user) throw new NotFoundError(`No user available`);
         return user;
     }
@@ -28,7 +31,8 @@ export default class UserRepository {
         const user = await UserModel.findOne(data)
             .lean()
             .populate("posts")
-            .populate("hostEvents");
+            .populate("hostEvents")
+            .populate("attendingEvents");
         if (!user && !login)
             throw new NotFoundError(
                 `No se ha encontrado un usuario con estos datos `

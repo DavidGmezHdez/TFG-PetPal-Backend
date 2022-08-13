@@ -17,8 +17,13 @@ export default class EventRepository {
     }
 
     static async get(id: string) {
-        const event = await EventModel.findById(id);
-        if (!event) throw new NotFoundError(`No event available`);
+        const event = await EventModel.findById(id)
+            .lean()
+            .sort({ date: -1 })
+            .populate("host")
+            .populate("attendants");
+        if (!event)
+            throw new NotFoundError(`No se ha encontrado ningún evento`);
         return event;
     }
 
