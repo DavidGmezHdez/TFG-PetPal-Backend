@@ -9,8 +9,8 @@
         "local": "set NODE_ENV=local&&ts-node -r tsconfig-paths/register index.ts",
         "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
         "lint": "npx eslint .",
-        "test": "jest --runInBand --config tests/config/jest.config.js",
-        "validate": "npm  run lint && npm run build",
+        "test": "jest --runInBand --config tests/config/jest.config.ts",
+        "validate": "npm  run lint && npm run build && npm run test",
         "deploy": " git push heroku main"
     },
     "author": "DavidGmezHdez",
@@ -47,6 +47,7 @@
         "@typescript-eslint/eslint-plugin": "^5.21.0",
         "@typescript-eslint/parser": "^5.21.0",
         "eslint": "^8.14.0",
+        "eslint-plugin-jest": "^27.0.1",
         "nodemon": "^2.0.19",
         "ts-jest": "^28.0.8",
         "ts-node": "^10.7.0",
