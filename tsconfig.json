@@ -3,7 +3,6 @@
         "target": "es2020",
         "module": "commonjs",
         "lib": ["es2020"],
-        "types": ["node", "jest"],
         "allowJs": true,
         "outDir": "build",
         "strict": true,
@@ -21,5 +20,7 @@
             "@utils/*": ["src/utils/*"],
             "@middlewares/*": ["src/middlewares/*"]
         }
-    }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["./tests"]
 }

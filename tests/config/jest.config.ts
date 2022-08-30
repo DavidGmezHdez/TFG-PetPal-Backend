@@ -7,6 +7,9 @@ const config: Config = {
     testEnvironment: "node",
     rootDir: "../../",
     verbose: true,
+    transform: {
+        "^.+\\.ts?$": "ts-jest"
+    },
     moduleNameMapper: {
         ...pathsToModuleNameMapper(
             {
