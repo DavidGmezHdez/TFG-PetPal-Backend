@@ -18,8 +18,7 @@ export default class ProtectorRepository {
             .lean()
             .populate("posts")
             .populate("pets");
-        if (protector === undefined)
-            throw new NotFoundError(`No protector available`);
+        if (!protector) throw new NotFoundError(`No protector available`);
         return protector;
     }
 

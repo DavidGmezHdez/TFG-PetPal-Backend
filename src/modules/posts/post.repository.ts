@@ -11,7 +11,6 @@ export default class PostRepository {
             .populate("author")
             .populate("comments")
             .sort({ createdAt: -1 });
-
         if (!posts.length) throw new NotFoundError(`No hay posts disponibles`);
         return posts;
     }
@@ -26,18 +25,15 @@ export default class PostRepository {
         const s3Result = image
             ? await s3Service.s3UploadV2(image, "posts")
             : { Location: undefined, Key: undefined };
-        console.log(s3Result);
         const sendPost = {
             ...post,
             image: s3Result.Location,
             imageKey: s3Result.Key
         };
-        console.log(s3Result);
         const createdPost = await PostModel.create(sendPost);
         const finalPost = await PostModel.findById(createdPost)
             .populate("author")
             .populate("comments");
-        console.log(finalPost);
         return finalPost;
     }
 
@@ -46,7 +42,9 @@ export default class PostRepository {
             { _id: post.id },
             { $set: post },
             { new: true }
-        );
+        )
+            .populate("author")
+            .populate("comments");
         if (!updatedPost) throw new NotFoundError(`No existe tal post`);
         return updatedPost;
     }
@@ -56,7 +54,9 @@ export default class PostRepository {
             { _id: post.id },
             { $set: post },
             { new: true }
-        );
+        )
+            .populate("author")
+            .populate("comments");
         if (!updatedPost) throw new NotFoundError(`No existe tal post`);
         return updatedPost;
     }
@@ -94,7 +94,9 @@ export default class PostRepository {
             { _id: id },
             { $push: { comments: createdComment._id } },
             { new: true }
-        ).populate("comments");
+        )
+            .populate("author")
+            .populate("comments");
 
         return updatedPost;
     }
@@ -104,7 +106,9 @@ export default class PostRepository {
             { _id: id },
             { $pull: { comments: { $in: [commentId] } } },
             { new: true }
-        ).populate("comments");
+        )
+            .populate("author")
+            .populate("comments");
         await CommentRepository.destroy(commentId);
         return updatedPost;
     }
