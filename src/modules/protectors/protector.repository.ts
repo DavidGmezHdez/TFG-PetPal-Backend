@@ -9,7 +9,7 @@ export default class ProtectorRepository {
     static async getAll() {
         const protectors = await ProtectorModel.find().lean();
         if (protectors === undefined)
-            throw new NotFoundError(`No protectors available`);
+            throw new NotFoundError(`No existen protectoras`);
         return protectors;
     }
 
@@ -18,7 +18,7 @@ export default class ProtectorRepository {
             .lean()
             .populate("posts")
             .populate("pets");
-        if (!protector) throw new NotFoundError(`No protector available`);
+        if (!protector) throw new NotFoundError(`Esa protectora no existe`);
         return protector;
     }
 
@@ -201,7 +201,7 @@ export default class ProtectorRepository {
     static async updateImage(id: string, image) {
         const foundedProtector = await ProtectorModel.findById(id).lean();
         if (!foundedProtector)
-            throw new NotFoundError(`Protector doesn't exist`);
+            throw new NotFoundError(`No existe esa protectora`);
         // If the protector doesn't have an image we must upload it
         if (image) {
             if (foundedProtector.imageKey) {
