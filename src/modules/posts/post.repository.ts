@@ -16,7 +16,9 @@ export default class PostRepository {
     }
 
     static async get(id: string) {
-        const post = await PostModel.findById(id);
+        const post = await PostModel.findById(id)
+            .populate("author")
+            .populate("comments");
         if (!post) throw new NotFoundError(`No hay posts disponibles`);
         return post;
     }

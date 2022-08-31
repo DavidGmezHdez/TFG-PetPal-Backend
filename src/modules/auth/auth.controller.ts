@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { BadRequest, NotFoundError } from "@utils/errors";
+import { BadRequest, NotFoundError, InternalError } from "@utils/errors";
 import { UserRepository } from "@modules/users";
 import bcrypt from "bcrypt";
 import { ProtectorRepository } from "@modules/protectors";
@@ -98,7 +98,9 @@ export default class AuthController {
                     next
                 );
             } else {
-                throw new NotFoundError("User with that email doesn't exist");
+                throw new NotFoundError(
+                    "No existe ningún usuario con ese email"
+                );
             }
         } catch (error) {
             return next(error);
@@ -120,7 +122,7 @@ export default class AuthController {
             );
 
             if (!compare) {
-                throw new NotFoundError("Incorrect email or password");
+                throw new NotFoundError("La contraseña es incorrecta");
             }
 
             const token = jwt.sign({ email: email }, process.env.JWT_SECRET);
@@ -150,8 +152,15 @@ export default class AuthController {
             );
 
             if (!compare) {
-                throw new NotFoundError("Incorrect email or password");
+                throw new NotFoundError("La contraseña es incorrecta");
             }
+
+            if (!foundedProtector.promoted) {
+                throw new InternalError(
+                    "Tu protectora no ha sido dada de alta todavía"
+                );
+            }
+
             const token = jwt.sign({ email: email }, process.env.JWT_SECRET);
             const user = {
                 ...foundedProtector,

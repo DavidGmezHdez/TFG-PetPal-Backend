@@ -82,7 +82,8 @@ export default class UserRepository {
         )
             .lean()
             .populate("posts")
-            .populate("hostEvents");
+            .populate("hostEvents")
+            .populate("attendingEvents");
         if (!updatedUser) throw new NotFoundError(`User doesn't exist`);
         return updatedUser;
     }
@@ -95,7 +96,8 @@ export default class UserRepository {
         )
             .lean()
             .populate("posts")
-            .populate("hostEvents");
+            .populate("hostEvents")
+            .populate("attendingEvents");
         if (!updatedUser) throw new NotFoundError(`User doesn't exist`);
         return updatedUser;
     }
@@ -150,7 +152,7 @@ export default class UserRepository {
                     imageKey: s3Result.Key
                 };
 
-                await UserModel.findByIdAndUpdate(
+                return await UserModel.findByIdAndUpdate(
                     { _id: user.id },
                     { $set: user },
                     { new: true }
