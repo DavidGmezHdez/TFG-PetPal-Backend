@@ -150,7 +150,7 @@ export default class UserRepository {
                     imageKey: s3Result.Key
                 };
 
-                await UserModel.findByIdAndUpdate(
+                return await UserModel.findByIdAndUpdate(
                     { _id: user.id },
                     { $set: user },
                     { new: true }

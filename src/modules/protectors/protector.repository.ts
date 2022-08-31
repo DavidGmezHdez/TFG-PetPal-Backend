@@ -217,7 +217,7 @@ export default class ProtectorRepository {
                     imageKey: s3Result.Key
                 };
 
-                await ProtectorModel.findByIdAndUpdate(
+                return await ProtectorModel.findByIdAndUpdate(
                     { _id: protector.id },
                     { $set: protector },
                     { new: true }
